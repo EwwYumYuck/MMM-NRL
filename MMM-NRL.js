@@ -1,4 +1,4 @@
-module.exports = Module.register("MMM-NRL", {
+Module.register("MMM-NRL", {
     defaults: {
         updateInterval: 300000, // update every 5 minutes
         animationSpeed: 1000,
@@ -8,10 +8,14 @@ module.exports = Module.register("MMM-NRL", {
         showTablePosition: true,
         colored: true,
         focus_on: [], // Array of team IDs to focus on
-        mode: "upcoming" // Possible values: "live", "upcoming", "completed"
+        mode: "live" // Possible values: "live", "upcoming", "completed"
     },
 
     requiresVersion: "2.1.0",
+
+    getScripts: function() {
+        return ["moment.js"];
+    },
 
     getStyles: function() {
         return ["MMM-NRL.css"];
@@ -19,43 +23,50 @@ module.exports = Module.register("MMM-NRL", {
 
     start: function() {
         Log.info("Starting module: " + this.name);
+        
         this.loaded = false;
         this.matches = [];
-        this.standings = [];
         this.errorMessage = null;
-        Log.info(this.name + " is starting with config:", JSON.stringify(this.config));
+
+        if (["live", "upcoming", "completed"].indexOf(this.config.mode) === -1) {
+            Log.error(this.name + ": Invalid mode specified. Defaulting to 'live'");
+            this.config.mode = "live";
+        }
+
+        Log.info(this.name + ": Configuration loaded:", JSON.stringify(this.config));
+        
         this.scheduleUpdate();
     },
 
     getDom: function() {
-        Log.info(this.name + ": Updating DOM");
+        Log.debug(this.name + ": Updating DOM");
         const wrapper = document.createElement("div");
         wrapper.className = "mmm-nrl";
 
         if (this.errorMessage) {
-            Log.error(this.name + ": Display error message:", this.errorMessage);
+            Log.error(this.name + ": Displaying error message:", this.errorMessage);
             wrapper.innerHTML = this.errorMessage;
             wrapper.className = "dimmed light small";
             return wrapper;
         }
 
         if (!this.loaded) {
-            Log.info(this.name + ": Module still loading");
+            Log.debug(this.name + ": Module not yet loaded, showing loading message");
             wrapper.innerHTML = "Loading NRL data...";
             wrapper.className = "dimmed light small";
             return wrapper;
         }
 
-        // Create matches table
-        if (this.matches && this.matches.length > 0) {
-            Log.info(this.name + ": Creating table with " + this.matches.length + " matches");
-            const matchesTable = this.createMatchesTable();
-            wrapper.appendChild(matchesTable);
-        } else {
-            Log.info(this.name + ": No matches to display");
+        if (!this.matches || this.matches.length === 0) {
+            Log.debug(this.name + ": No matches available to display");
             wrapper.innerHTML = "No matches available";
             wrapper.className = "dimmed light small";
+            return wrapper;
         }
+
+        Log.debug(this.name + ": Creating table with " + this.matches.length + " matches");
+        const table = this.createMatchesTable();
+        wrapper.appendChild(table);
 
         return wrapper;
     },
@@ -65,16 +76,14 @@ module.exports = Module.register("MMM-NRL", {
         table.className = "small";
 
         this.matches.forEach((match, index) => {
-            Log.debug(this.name + ": Processing match " + index, JSON.stringify(match));
+            Log.debug(this.name + ": Processing match " + index, match);
             const row = document.createElement("tr");
             row.className = "title bright";
 
-            // Home team
             const homeCell = document.createElement("td");
             homeCell.className = "align-right";
             homeCell.innerHTML = match.homeTeam.name;
             
-            // Score
             const scoreCell = document.createElement("td");
             scoreCell.className = "align-center";
             if (this.config.showScores && match.status === "COMPLETED") {
@@ -83,7 +92,6 @@ module.exports = Module.register("MMM-NRL", {
                 scoreCell.innerHTML = "vs";
             }
 
-            // Away team
             const awayCell = document.createElement("td");
             awayCell.className = "align-left";
             awayCell.innerHTML = match.awayTeam.name;
@@ -98,8 +106,8 @@ module.exports = Module.register("MMM-NRL", {
     },
 
     scheduleUpdate: function() {
-        const self = this;
         Log.info(this.name + ": Scheduling updates every " + this.config.updateInterval + "ms");
+        const self = this;
         setInterval(() => {
             self.updateData();
         }, this.config.updateInterval);
@@ -113,15 +121,18 @@ module.exports = Module.register("MMM-NRL", {
     },
 
     socketNotificationReceived: function(notification, payload) {
-        Log.info(this.name + ": Received socket notification: " + notification);
+        Log.info(this.name + ": Received socket notification:", notification);
+        
         if (notification === "NRL_DATA") {
+            Log.info(this.name + ": Processing NRL data update");
             this.loaded = true;
             this.matches = payload.matches;
+            this.errorMessage = null;
             Log.info(this.name + ": Received " + this.matches.length + " matches");
             this.updateDom(this.config.animationSpeed);
         } else if (notification === "NRL_ERROR") {
-            this.errorMessage = "Error loading NRL data";
-            Log.error(this.name + ": Error loading data:", payload.error);
+            Log.error(this.name + ": Error loading NRL data:", payload.error);
+            this.errorMessage = "Error loading NRL data: " + payload.error;
             this.updateDom(this.config.animationSpeed);
         }
     }

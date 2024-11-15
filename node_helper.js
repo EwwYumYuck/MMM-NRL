@@ -4,11 +4,17 @@ const fetch = require("node-fetch");
 module.exports = NodeHelper.create({
     start: function() {
         console.log("Starting node helper for: " + this.name);
+        this.started = false;
     },
 
     socketNotificationReceived: function(notification, payload) {
         console.log(this.name + ": Received socket notification:", notification);
+        
         if (notification === "GET_NRL_DATA") {
+            if (!this.started) {
+                console.log(this.name + ": First time initialization");
+                this.started = true;
+            }
             console.log(this.name + ": Getting NRL data with config:", JSON.stringify(payload));
             this.getData(payload);
         }
@@ -17,6 +23,7 @@ module.exports = NodeHelper.create({
     getData: async function(config) {
         try {
             console.log(this.name + ": Fetching NRL data from API...");
+            
             // Using NRL's public API endpoint
             const response = await fetch("https://nrl.com/api/v2/matches", {
                 headers: {
@@ -30,20 +37,15 @@ module.exports = NodeHelper.create({
             }
 
             const data = await response.json();
-            console.log(this.name + ": Raw API response:", JSON.stringify(data, null, 2));
+            console.log(this.name + ": Successfully received raw data from API");
             
-            // Process and filter the matches based on config
-            let matches = data.matches || [];
-            console.log(this.name + ": Total matches before filtering:", matches.length);
-            
-            if (config.focus_on && config.focus_on.length > 0) {
-                console.log(this.name + ": Filtering for teams:", config.focus_on);
-                matches = matches.filter(match => 
-                    config.focus_on.includes(match.homeTeam.id) || 
-                    config.focus_on.includes(match.awayTeam.id)
-                );
-                console.log(this.name + ": Matches after team filtering:", matches.length);
+            if (!data || !data.matches) {
+                throw new Error("Invalid data format received from API");
             }
+
+            // Process and filter the matches based on config
+            let matches = data.matches;
+            console.log(this.name + ": Total matches received:", matches.length);
 
             // Filter based on mode
             console.log(this.name + ": Filtering matches by mode:", config.mode);
@@ -56,15 +58,29 @@ module.exports = NodeHelper.create({
             }
             console.log(this.name + ": Matches after status filtering:", matches.length);
 
+            // Filter by teams if specified
+            if (config.focus_on && config.focus_on.length > 0) {
+                console.log(this.name + ": Filtering for teams:", config.focus_on);
+                matches = matches.filter(match => 
+                    config.focus_on.includes(match.homeTeam.id) || 
+                    config.focus_on.includes(match.awayTeam.id)
+                );
+                console.log(this.name + ": Matches after team filtering:", matches.length);
+            }
+
             // Limit the number of matches
             matches = matches.slice(0, config.maximumEntries);
             console.log(this.name + ": Final matches after limiting to " + config.maximumEntries + ":", matches.length);
-            console.log(this.name + ": Processed matches:", JSON.stringify(matches, null, 2));
 
+            // Send the processed data back to the module
             this.sendSocketNotification("NRL_DATA", { matches });
+            console.log(this.name + ": Data sent back to module");
+
         } catch (error) {
-            console.error(this.name + ": Error fetching NRL data:", error);
-            this.sendSocketNotification("NRL_ERROR", { error: error.message });
+            console.error(this.name + ": Error fetching NRL data:", error.message);
+            this.sendSocketNotification("NRL_ERROR", { 
+                error: error.message || "Unknown error occurred"
+            });
         }
     }
 });

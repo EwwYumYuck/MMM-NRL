@@ -5,19 +5,26 @@
     color: #fff;
 }
 
-.mmm-nrl .align-left {
-    text-align: left;
-    padding-left: 10px;
+.mmm-nrl tr {
+    padding: 0;
 }
 
-.mmm-nrl .align-right {
-    text-align: right;
-    padding-right: 10px;
-}
-
-.mmm-nrl .align-center {
+.mmm-nrl td {
+    padding: 5px;
     text-align: center;
-    padding: 0 5px;
+}
+
+.mmm-nrl td.align-left {
+    text-align: left;
+}
+
+.mmm-nrl td.align-right {
+    text-align: right;
+}
+
+.mmm-nrl td.align-center {
+    text-align: center;
+    min-width: 50px;
 }
 
 .mmm-nrl .dimmed {
@@ -28,8 +35,12 @@
     color: #fff;
 }
 
-.mmm-nrl .team-logo {
-    height: 25px;
-    vertical-align: middle;
-    margin: 0 5px;
+.mmm-nrl .small {
+    font-size: 15px;
+    line-height: 20px;
+}
+
+.mmm-nrl .light {
+    font-family: "Roboto Condensed", Arial, Helvetica, sans-serif;
+    font-weight: 300;
 }
