@@ -27,6 +27,7 @@ Add the following configuration to your `config/config.js` file:
 ```javascript
 {
     module: "MMM-NRL",
+    header: "MMM-NRL",
     position: "top_right",
     config: {
         updateInterval: 300000, // Update every 5 minutes
