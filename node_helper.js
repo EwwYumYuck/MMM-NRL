@@ -29,13 +29,26 @@ module.exports = NodeHelper.create({
             
             // Get current year and try both current and next year during transition periods
             const currentYear = new Date().getFullYear();
-            const seasons = [currentYear];
+            const seasons = [];
             
-            // During off-season (October-February), also try next year
+            // During off-season (October-February), try current season first, then next season
             const currentMonth = new Date().getMonth() + 1; // 1-12
             if (currentMonth >= 10 || currentMonth <= 2) {
+                // During off-season, try current season first (for finals/late games)
+                seasons.push(currentYear);
+                // Then try next season (for pre-season games)
                 seasons.push(currentYear + 1);
+            } else {
+                // During regular season, just try current year
+                seasons.push(currentYear);
             }
+
+            // If it's early in the year (Jan-Feb), also try previous year
+            if (currentMonth <= 2) {
+                seasons.unshift(currentYear - 1);
+            }
+            
+            console.log(this.name + ": Will try seasons in order:", seasons.join(", "));
             
             let data = null;
             let error = null;

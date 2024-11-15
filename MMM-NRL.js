@@ -65,8 +65,10 @@ Module.register("MMM-NRL", {
             // Check if it's an off-season error
             if (this.errorMessage.includes("404") || this.errorMessage.includes("No games found")) {
                 const currentMonth = new Date().getMonth() + 1; // 1-12
-                if (currentMonth >= 10 || currentMonth <= 2) {
-                    wrapper.innerHTML = "NRL is currently in off-season. Check back in March for the new season!";
+                if (currentMonth >= 10) {
+                    wrapper.innerHTML = "NRL is currently in off-season. The 2024 season will begin in March!";
+                } else if (currentMonth <= 2) {
+                    wrapper.innerHTML = "NRL pre-season starts soon. The 2024 season will begin in March!";
                 } else {
                     wrapper.innerHTML = this.errorMessage;
                 }
