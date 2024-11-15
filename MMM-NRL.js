@@ -1,4 +1,7 @@
+var Module = require("node_helper");
+
 Module.register("MMM-NRL", {
+    // Override default module config
     defaults: {
         updateInterval: 300000, // update every 5 minutes
         animationSpeed: 1000,
@@ -11,23 +14,26 @@ Module.register("MMM-NRL", {
         mode: "live" // Possible values: "live", "upcoming", "completed"
     },
 
-    requiresVersion: "2.1.0",
-
+    // Define required scripts
     getScripts: function() {
         return ["moment.js"];
     },
 
+    // Define required styles
     getStyles: function() {
         return ["MMM-NRL.css"];
     },
 
+    // Override start method
     start: function() {
         Log.info("Starting module: " + this.name);
         
+        // Set up data structures
         this.loaded = false;
         this.matches = [];
         this.errorMessage = null;
 
+        // Validate configuration
         if (["live", "upcoming", "completed"].indexOf(this.config.mode) === -1) {
             Log.error(this.name + ": Invalid mode specified. Defaulting to 'live'");
             this.config.mode = "live";
@@ -35,9 +41,16 @@ Module.register("MMM-NRL", {
 
         Log.info(this.name + ": Configuration loaded:", JSON.stringify(this.config));
         
+        // Initial data load
         this.scheduleUpdate();
+        Log.info(this.name + ": Initial update scheduled");
+        
+        // Force immediate first update
+        this.updateData();
+        Log.info(this.name + ": Immediate first update triggered");
     },
 
+    // Override getDom method
     getDom: function() {
         Log.debug(this.name + ": Updating DOM");
         const wrapper = document.createElement("div");
@@ -64,6 +77,7 @@ Module.register("MMM-NRL", {
             return wrapper;
         }
 
+        // Create matches table
         Log.debug(this.name + ": Creating table with " + this.matches.length + " matches");
         const table = this.createMatchesTable();
         wrapper.appendChild(table);
@@ -111,8 +125,6 @@ Module.register("MMM-NRL", {
         setInterval(() => {
             self.updateData();
         }, this.config.updateInterval);
-        
-        self.updateData();
     },
 
     updateData: function() {

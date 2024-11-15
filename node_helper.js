@@ -5,14 +5,17 @@ module.exports = NodeHelper.create({
     start: function() {
         console.log("Starting node helper for: " + this.name);
         this.started = false;
+        this.config = null;
     },
 
+    // Override socketNotificationReceived method
     socketNotificationReceived: function(notification, payload) {
         console.log(this.name + ": Received socket notification:", notification);
         
         if (notification === "GET_NRL_DATA") {
             if (!this.started) {
                 console.log(this.name + ": First time initialization");
+                this.config = payload;
                 this.started = true;
             }
             console.log(this.name + ": Getting NRL data with config:", JSON.stringify(payload));
