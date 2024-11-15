@@ -213,6 +213,11 @@ Module.register("MMM-NRL", {
         } else if (notification === "NRL_DATA_ERROR") {
             this.errorMessage = payload.error;
             this.updateDom(this.config.animationSpeed);
+        } else if (notification === "NRL_OFF_SEASON") {
+            this.loaded = true;
+            this.matches = [];
+            this.errorMessage = payload.error;
+            this.updateDom(this.config.animationSpeed);
         }
     }
 });

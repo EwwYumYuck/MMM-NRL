@@ -27,31 +27,36 @@ module.exports = NodeHelper.create({
         try {
             console.log(this.name + ": Fetching NRL data from API...");
             
-            // Get current year and try both current and next year during transition periods
+            // Get current year and determine seasons to try
             const currentYear = new Date().getFullYear();
             const seasons = [];
             
-            // During off-season (October-February), try current season first, then next season
+            // During late year (October-December), try completed season first
             const currentMonth = new Date().getMonth() + 1; // 1-12
-            if (currentMonth >= 10 || currentMonth <= 2) {
-                // During off-season, try current season first (for finals/late games)
+            if (currentMonth >= 10) {
+                // Try current year first (completed season)
                 seasons.push(currentYear);
-                // Then try next season (for pre-season games)
-                seasons.push(currentYear + 1);
-            } else {
-                // During regular season, just try current year
+                // Don't try next year until closer to season start
+            } else if (currentMonth <= 2) {
+                // During early year (Jan-Feb), try previous year's completed season
+                seasons.push(currentYear - 1);
+                // Then try current year for pre-season
+                seasons.push(currentYear);
+            } else if (currentMonth >= 3 && currentMonth <= 9) {
+                // During regular season (March-September), just try current year
                 seasons.push(currentYear);
             }
 
-            // If it's early in the year (Jan-Feb), also try previous year
-            if (currentMonth <= 2) {
-                seasons.unshift(currentYear - 1);
+            // If we're close to the new season (Jan-Mar), add next season for pre-season games
+            if (currentMonth >= 1 && currentMonth <= 3) {
+                seasons.push(currentYear + 1);
             }
             
             console.log(this.name + ": Will try seasons in order:", seasons.join(", "));
             
             let data = null;
             let error = null;
+            let isOffSeason = false;
             
             // Try each season until we get data
             for (const season of seasons) {
@@ -71,16 +76,21 @@ module.exports = NodeHelper.create({
                     if (!response.ok) {
                         error = `HTTP error! status: ${response.status} for season ${season}`;
                         console.log(this.name + ": " + error);
+                        if (response.status === 404) {
+                            isOffSeason = true;
+                        }
                         continue;
                     }
 
                     data = await response.json();
                     if (data && Array.isArray(data.games) && data.games.length > 0) {
                         console.log(this.name + `: Successfully fetched data from API for season ${season}`);
+                        isOffSeason = false;
                         break;
                     } else {
                         error = `No games found in API response for season ${season}`;
                         console.log(this.name + ": " + error);
+                        isOffSeason = true;
                     }
                 } catch (err) {
                     error = `Error fetching season ${season}: ${err.message}`;
@@ -88,10 +98,27 @@ module.exports = NodeHelper.create({
                 }
             }
 
-            // If we couldn't get data from any season, use fallback data
+            // If we couldn't get data from any season and it's off-season
+            if (isOffSeason) {
+                console.log(this.name + ": Currently in off-season period");
+                this.sendSocketNotification("NRL_OFF_SEASON", {
+                    error: "Currently in off-season. The 2025 NRL season begins in March 2025!"
+                });
+                return;
+            }
+
+            // If we couldn't get data for other reasons, use fallback data
             if (!data || !Array.isArray(data.games) || data.games.length === 0) {
                 console.log(this.name + ": No valid data found for any season, using fallback data");
                 console.log(this.name + ": Last error was: " + error);
+                
+                // Send off-season notification if all attempts were 404
+                if (error.includes("404")) {
+                    this.sendSocketNotification("NRL_OFF_SEASON", {
+                        error: error
+                    });
+                    return;
+                }
                 
                 // Use mock data during off-season or when API is unavailable
                 data = {
