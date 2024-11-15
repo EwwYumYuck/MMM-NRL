@@ -42,24 +42,43 @@ module.exports = NodeHelper.create({
 
             const data = await response.json();
             console.log(this.name + ": Successfully fetched data from NRL API");
+            console.log(this.name + ": API Response Structure:", JSON.stringify(data, null, 2));
 
             // Transform API data to our format
             let matches = [];
             if (data && Array.isArray(data.fixtures)) {
+                console.log(this.name + ": Processing " + data.fixtures.length + " fixtures");
                 matches = data.fixtures.map(match => {
                     try {
+                        console.log(this.name + ": Processing match data:", JSON.stringify(match, null, 2));
+                        
                         const getTeamName = (team) => {
-                            if (!team) return 'Unknown Team';
-                            return team.shortName || team.name || 'Unknown Team';
+                            if (!team) {
+                                console.log(this.name + ": Team data is missing");
+                                return 'Unknown Team';
+                            }
+                            const name = team.shortName || team.name || team.nickName || 'Unknown Team';
+                            console.log(this.name + ": Resolved team name:", name);
+                            return name;
                         };
 
                         const getTeamLogo = (team) => {
-                            if (!team) return 'modules/MMM-NRL/logos/default.svg';
-                            const teamName = getTeamName(team);
-                            return `modules/MMM-NRL/logos/${teamName.toLowerCase().replace(/\s+/g, '')}.svg`;
+                            if (!team) {
+                                console.log(this.name + ": Team data is missing for logo");
+                                return 'modules/MMM-NRL/logos/default.svg';
+                            }
+                            try {
+                                const teamName = getTeamName(team);
+                                const logoPath = `modules/MMM-NRL/logos/${teamName.toLowerCase().replace(/[^a-z0-9]/g, '')}.svg`;
+                                console.log(this.name + ": Generated logo path:", logoPath);
+                                return logoPath;
+                            } catch (err) {
+                                console.error(this.name + ": Error generating logo path:", err);
+                                return 'modules/MMM-NRL/logos/default.svg';
+                            }
                         };
 
-                        return {
+                        const matchData = {
                             homeTeam: {
                                 name: getTeamName(match.homeTeam),
                                 score: match.homeTeam?.score || 0,
@@ -77,11 +96,20 @@ module.exports = NodeHelper.create({
                             round: match.roundNumber || 'Unknown Round',
                             venue: match.venue?.name || 'TBA'
                         };
+
+                        console.log(this.name + ": Successfully processed match:", JSON.stringify(matchData, null, 2));
+                        return matchData;
                     } catch (err) {
                         console.error(this.name + ": Error processing match data:", err);
+                        console.error(this.name + ": Problematic match data:", JSON.stringify(match, null, 2));
                         return null;
                     }
                 }).filter(match => match !== null); // Remove any matches that failed to process
+            } else {
+                console.log(this.name + ": No fixtures found in API response");
+                if (data) {
+                    console.log(this.name + ": Available data keys:", Object.keys(data));
+                }
             }
 
             console.log(this.name + ": Total matches received:", matches.length);
@@ -153,7 +181,10 @@ module.exports = NodeHelper.create({
     },
 
     getMatchStatus: function(apiStatus) {
-        if (!apiStatus) return 'UNKNOWN';
+        if (!apiStatus) {
+            console.log(this.name + ": No status provided");
+            return 'UNKNOWN';
+        }
         
         // Map NRL API status to our internal status
         const statusMap = {
@@ -163,8 +194,12 @@ module.exports = NodeHelper.create({
             'Postponed': 'SCHEDULED',
             'Cancelled': 'CANCELLED',
             'Final': 'COMPLETED',
-            'Half Time': 'IN_PROGRESS'
+            'Half Time': 'IN_PROGRESS',
+            'Post Game': 'COMPLETED'
         };
-        return statusMap[apiStatus] || 'UNKNOWN';
+
+        const mappedStatus = statusMap[apiStatus] || 'UNKNOWN';
+        console.log(this.name + `: Mapping status '${apiStatus}' to '${mappedStatus}'`);
+        return mappedStatus;
     }
 });
