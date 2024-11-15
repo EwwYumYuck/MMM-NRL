@@ -11,7 +11,7 @@ cd ~/MagicMirror/modules
 
 2. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/MMM-NRL.git
+git clone https://github.com/EwwYumYuck/MMM-NRL
 ```
 
 3. Install dependencies:
