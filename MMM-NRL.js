@@ -61,7 +61,19 @@ Module.register("MMM-NRL", {
 
         if (this.errorMessage) {
             Log.error(this.name + ": Displaying error message:", this.errorMessage);
-            wrapper.innerHTML = this.errorMessage;
+            
+            // Check if it's an off-season error
+            if (this.errorMessage.includes("404") || this.errorMessage.includes("No games found")) {
+                const currentMonth = new Date().getMonth() + 1; // 1-12
+                if (currentMonth >= 10 || currentMonth <= 2) {
+                    wrapper.innerHTML = "NRL is currently in off-season. Check back in March for the new season!";
+                } else {
+                    wrapper.innerHTML = this.errorMessage;
+                }
+            } else {
+                wrapper.innerHTML = this.errorMessage;
+            }
+            
             wrapper.className = "dimmed light small";
             return wrapper;
         }

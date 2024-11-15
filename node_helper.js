@@ -27,29 +27,59 @@ module.exports = NodeHelper.create({
         try {
             console.log(this.name + ": Fetching NRL data from API...");
             
-            // Using the correct NRL API endpoint
-            const SEASON = new Date().getFullYear();
-            const API_URL = `https://nrl.com/api/v2/game/list?offset=0&limit=50&competitionId=111&season=${SEASON}`;
+            // Get current year and try both current and next year during transition periods
+            const currentYear = new Date().getFullYear();
+            const seasons = [currentYear];
             
-            console.log(this.name + ": Trying API endpoint:", API_URL);
-            const response = await fetch(API_URL, {
-                headers: {
-                    'Accept': 'application/json',
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
-                    'Referer': 'https://www.nrl.com/draw/',
-                    'Origin': 'https://www.nrl.com'
-                }
-            });
+            // During off-season (October-February), also try next year
+            const currentMonth = new Date().getMonth() + 1; // 1-12
+            if (currentMonth >= 10 || currentMonth <= 2) {
+                seasons.push(currentYear + 1);
+            }
+            
+            let data = null;
+            let error = null;
+            
+            // Try each season until we get data
+            for (const season of seasons) {
+                try {
+                    const API_URL = `https://nrl.com/api/v2/game/list?offset=0&limit=50&competitionId=111&season=${season}`;
+                    
+                    console.log(this.name + ": Trying API endpoint for season " + season + ":", API_URL);
+                    const response = await fetch(API_URL, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+                            'Referer': 'https://www.nrl.com/draw/',
+                            'Origin': 'https://www.nrl.com'
+                        }
+                    });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                    if (!response.ok) {
+                        error = `HTTP error! status: ${response.status} for season ${season}`;
+                        console.log(this.name + ": " + error);
+                        continue;
+                    }
+
+                    data = await response.json();
+                    if (data && Array.isArray(data.games) && data.games.length > 0) {
+                        console.log(this.name + `: Successfully fetched data from API for season ${season}`);
+                        break;
+                    } else {
+                        error = `No games found in API response for season ${season}`;
+                        console.log(this.name + ": " + error);
+                    }
+                } catch (err) {
+                    error = `Error fetching season ${season}: ${err.message}`;
+                    console.log(this.name + ": " + error);
+                }
             }
 
-            const data = await response.json();
-            console.log(this.name + ": Successfully fetched data from API");
-
-            if (!data || !Array.isArray(data.games)) {
-                console.log(this.name + ": No games found in API response, using fallback data");
+            // If we couldn't get data from any season, use fallback data
+            if (!data || !Array.isArray(data.games) || data.games.length === 0) {
+                console.log(this.name + ": No valid data found for any season, using fallback data");
+                console.log(this.name + ": Last error was: " + error);
+                
                 // Use mock data during off-season or when API is unavailable
                 data = {
                     games: [{
