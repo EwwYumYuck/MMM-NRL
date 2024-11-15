@@ -87,28 +87,72 @@ Module.register("MMM-NRL", {
 
     createMatchesTable: function() {
         const table = document.createElement("table");
-        table.className = "small";
+        table.className = "small nrl-table";
 
         this.matches.forEach((match, index) => {
             Log.debug(this.name + ": Processing match " + index, match);
-            const row = document.createElement("tr");
-            row.className = "title bright";
-
-            const homeCell = document.createElement("td");
-            homeCell.className = "align-right";
-            homeCell.innerHTML = match.homeTeam.name;
             
+            // Create match row
+            const row = document.createElement("tr");
+            row.className = "title bright match-row";
+
+            // Home team cell
+            const homeCell = document.createElement("td");
+            homeCell.className = "align-right team-cell";
+            if (this.config.showTeamLogos && match.homeTeam.logo) {
+                const homeLogo = document.createElement("img");
+                homeLogo.src = match.homeTeam.logo;
+                homeLogo.className = "team-logo";
+                homeCell.appendChild(homeLogo);
+            }
+            const homeText = document.createElement("span");
+            homeText.innerHTML = match.homeTeam.name;
+            homeCell.appendChild(homeText);
+
+            // Score cell
             const scoreCell = document.createElement("td");
-            scoreCell.className = "align-center";
-            if (this.config.showScores && match.status === "COMPLETED") {
-                scoreCell.innerHTML = match.homeTeam.score + " - " + match.awayTeam.score;
+            scoreCell.className = "align-center score-cell";
+            if (this.config.showScores) {
+                if (match.status === "COMPLETED") {
+                    scoreCell.innerHTML = `${match.homeTeam.score} - ${match.awayTeam.score}`;
+                    scoreCell.className += " completed";
+                } else if (match.status === "IN_PROGRESS") {
+                    scoreCell.innerHTML = `${match.homeTeam.score} - ${match.awayTeam.score}`;
+                    scoreCell.className += " live";
+                } else {
+                    const matchTime = moment(match.startTime).format("HH:mm");
+                    scoreCell.innerHTML = matchTime;
+                    scoreCell.className += " upcoming";
+                }
             } else {
                 scoreCell.innerHTML = "vs";
             }
 
+            // Away team cell
             const awayCell = document.createElement("td");
-            awayCell.className = "align-left";
-            awayCell.innerHTML = match.awayTeam.name;
+            awayCell.className = "align-left team-cell";
+            const awayText = document.createElement("span");
+            awayText.innerHTML = match.awayTeam.name;
+            awayCell.appendChild(awayText);
+            if (this.config.showTeamLogos && match.awayTeam.logo) {
+                const awayLogo = document.createElement("img");
+                awayLogo.src = match.awayTeam.logo;
+                awayLogo.className = "team-logo";
+                awayCell.appendChild(awayLogo);
+            }
+
+            // Add table position if configured
+            if (this.config.showTablePosition) {
+                const homePos = document.createElement("span");
+                homePos.className = "table-position";
+                homePos.innerHTML = `[${match.homeTeam.position || "-"}]`;
+                homeCell.appendChild(homePos);
+
+                const awayPos = document.createElement("span");
+                awayPos.className = "table-position";
+                awayPos.innerHTML = `[${match.awayTeam.position || "-"}]`;
+                awayCell.appendChild(awayPos);
+            }
 
             row.appendChild(homeCell);
             row.appendChild(scoreCell);

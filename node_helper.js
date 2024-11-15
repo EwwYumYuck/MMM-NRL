@@ -82,7 +82,7 @@ module.exports = NodeHelper.create({
         } catch (error) {
             console.error(this.name + ": Error fetching NRL data:", error.message);
             this.sendSocketNotification("NRL_ERROR", { 
-                error: error.message || "Unknown error occurred"
+                error: error.message || "Unknown error occurred while fetching NRL data"
             });
         }
     }

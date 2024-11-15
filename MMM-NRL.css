@@ -1,46 +1,50 @@
-.mmm-nrl table {
+.mmm-nrl {
+    width: 100%;
+    text-align: center;
+}
+
+.nrl-table {
     width: 100%;
     border-spacing: 2px;
     border-collapse: separate;
     color: #fff;
 }
 
-.mmm-nrl tr {
-    padding: 0;
+.match-row {
+    line-height: 1.5em;
 }
 
-.mmm-nrl td {
-    padding: 5px;
-    text-align: center;
+.team-cell {
+    padding: 0 10px;
+    white-space: nowrap;
 }
 
-.mmm-nrl td.align-left {
-    text-align: left;
+.score-cell {
+    min-width: 60px;
+    padding: 0 5px;
 }
 
-.mmm-nrl td.align-right {
-    text-align: right;
+.score-cell.live {
+    color: #ff0;
 }
 
-.mmm-nrl td.align-center {
-    text-align: center;
-    min-width: 50px;
+.score-cell.completed {
+    color: #999;
 }
 
-.mmm-nrl .dimmed {
-    color: #666;
+.score-cell.upcoming {
+    color: #0f0;
 }
 
-.mmm-nrl .bright {
-    color: #fff;
+.team-logo {
+    height: 20px;
+    width: auto;
+    vertical-align: middle;
+    margin: 0 5px;
 }
 
-.mmm-nrl .small {
-    font-size: 15px;
-    line-height: 20px;
-}
-
-.mmm-nrl .light {
-    font-family: "Roboto Condensed", Arial, Helvetica, sans-serif;
-    font-weight: 300;
+.table-position {
+    font-size: 0.8em;
+    color: #999;
+    margin: 0 5px;
 }
