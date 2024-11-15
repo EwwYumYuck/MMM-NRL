@@ -148,11 +148,23 @@ module.exports = NodeHelper.create({
                 console.log(this.name + ": Processing " + data.games.length + " games");
                 matches = data.games.map(game => {
                     try {
-                        console.log(this.name + ": Processing game data:", JSON.stringify(game, null, 2));
+                        console.log(this.name + ": Processing game data:", JSON.stringify({
+                            homeTeam: game.homeTeam?.nickName || game.homeTeam?.teamName,
+                            awayTeam: game.awayTeam?.nickName || game.awayTeam?.teamName,
+                            gameState: game.gameState,
+                            kickOffDate: game.kickOffDate,
+                            roundNumber: game.roundNumber,
+                            venue: game.venue?.name
+                        }, null, 2));
                         
                         const getTeamName = (team) => {
-                            if (!team) return 'Unknown Team';
-                            return team.nickName || team.teamName || 'Unknown Team';
+                            if (!team) {
+                                console.log(this.name + ": Warning - Missing team data");
+                                return 'Unknown Team';
+                            }
+                            const name = team.nickName || team.teamName || 'Unknown Team';
+                            console.log(this.name + ": Resolved team name:", name);
+                            return name;
                         };
 
                         const kickOffDate = new Date(game.kickOffDate);
@@ -161,6 +173,14 @@ module.exports = NodeHelper.create({
                         const isUpcoming = status === 'SCHEDULED' && kickOffDate > now;
                         const isLive = status === 'LIVE';
                         const showScore = !isUpcoming || config.showScores;
+
+                        console.log(this.name + ": Match details:", {
+                            status,
+                            isUpcoming,
+                            isLive,
+                            showScore,
+                            kickOffTime: this.formatKickoffTime(kickOffDate)
+                        });
 
                         return {
                             homeTeam: getTeamName(game.homeTeam),
@@ -237,12 +257,13 @@ module.exports = NodeHelper.create({
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
         
+        let formattedTime;
         if (date.toDateString() === today.toDateString()) {
-            return 'Today ' + date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
+            formattedTime = 'Today ' + date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
         } else if (date.toDateString() === tomorrow.toDateString()) {
-            return 'Tomorrow ' + date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
+            formattedTime = 'Tomorrow ' + date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
         } else {
-            return date.toLocaleDateString('en-AU', { 
+            formattedTime = date.toLocaleDateString('en-AU', { 
                 weekday: 'short', 
                 day: 'numeric', 
                 month: 'short',
@@ -250,15 +271,19 @@ module.exports = NodeHelper.create({
                 minute: '2-digit'
             });
         }
+        console.log(this.name + ": Formatted kickoff time:", formattedTime);
+        return formattedTime;
     },
 
     formatGameTime: function(date) {
-        return date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
+        const formattedTime = date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
+        console.log(this.name + ": Formatted game time:", formattedTime);
+        return formattedTime;
     },
 
     getMatchStatus: function(apiStatus) {
         if (!apiStatus) {
-            console.log(this.name + ": No status provided");
+            console.log(this.name + ": No status provided, defaulting to SCHEDULED");
             return 'SCHEDULED';
         }
         

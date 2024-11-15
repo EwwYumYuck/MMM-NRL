@@ -1,7 +1,15 @@
+.MMM-NRL {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
 .MMM-NRL .wrapper {
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
+    text-align: center;
 }
 
 .MMM-NRL table {
