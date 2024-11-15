@@ -13,6 +13,10 @@ module.exports = Module.register("MMM-NRL", {
 
     requiresVersion: "2.1.0",
 
+    getStyles: function() {
+        return ["MMM-NRL.css"];
+    },
+
     start: function() {
         Log.info("Starting module: " + this.name);
         this.loaded = false;
