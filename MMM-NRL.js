@@ -107,7 +107,7 @@ Module.register("MMM-NRL", {
             homeLogoCell.className = "firstTeam firstTeamLogo logo";
             if (this.config.showTeamLogos) {
                 const homeLogo = document.createElement("img");
-                homeLogo.src = this.file("icons/" + match.homeTeam.toLowerCase().replace(/[^a-z0-9]/g, '') + ".png");
+                homeLogo.src = this.file("logos/" + match.homeTeam.toLowerCase().replace(/[^a-z0-9]/g, '') + ".png");
                 homeLogo.className = "team-logo" + (!this.config.colored ? " uncolored" : "");
                 homeLogoCell.appendChild(homeLogo);
             }
@@ -135,7 +135,7 @@ Module.register("MMM-NRL", {
             awayLogoCell.className = "secondTeam secondTeamLogo logo";
             if (this.config.showTeamLogos) {
                 const awayLogo = document.createElement("img");
-                awayLogo.src = this.file("icons/" + match.awayTeam.toLowerCase().replace(/[^a-z0-9]/g, '') + ".png");
+                awayLogo.src = this.file("logos/" + match.awayTeam.toLowerCase().replace(/[^a-z0-9]/g, '') + ".png");
                 awayLogo.className = "team-logo" + (!this.config.colored ? " uncolored" : "");
                 awayLogoCell.appendChild(awayLogo);
             }

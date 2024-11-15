@@ -1,0 +1,1488 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" class="no-js-keyboard-focus">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="true" />
+  <meta name="MobileOptimized" content="320" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.optimizely.com/js/26919700052.js"></script>
+  <title>Bad request or invalid characters in URL. (400) | NRL.com</title>
+  <script>document.documentElement.classList.remove('no-js');</script>
+
+<link rel="preload" as="font" href="/Client/dist/public/fonts/rl2-bold.woff2" crossorigin>
+<link rel="preload" as="font" href="/Client/dist/public/fonts/rl2-medium.woff2" crossorigin>
+<link rel="preload" as="font" href="/Client/dist/public/fonts/rl2-regular.woff2" crossorigin>
+
+<link href="/Client/dist/styles.8A308076.css" rel="stylesheet" />
+  
+  <link rel="manifest" href="/manifest.json" />
+  <script charset="UTF-8" type="text/javascript">
+  window["adrum-start-time"] = new Date().getTime();
+  (function(config){
+      config.appKey = "SY-AAB-NTB";
+      config.adrumExtUrlHttp = "http://cdn.appdynamics.com";
+      config.adrumExtUrlHttps = "https://cdn.appdynamics.com";
+      config.beaconUrlHttp = "http://syd-col.eum-appdynamics.com";
+      config.beaconUrlHttps = "https://syd-col.eum-appdynamics.com";
+      config.useHTTPSAlways = true;
+      config.resTiming = {"bufSize":200,"clearResTimingOnBeaconSend":true};
+      config.maxUrlLength = 512;
+  })(window["adrum-config"] || (window["adrum-config"] = {}));
+  </script>
+  <script src="//cdn.appdynamics.com/adrum/adrum-23.3.0.4265.js"></script>
+
+  <script>
+    window.NRL_SITE_THEME = {"key":"nrl","logos":{"badge.png":"202411120018","badge.svg":"202411120018","silhouette.svg":"202411120018","text.svg":"202411120018"}};
+      window.NRL_PAGE_DATA = {"name":"Bad request or invalid characters in URL. (400)","pageId":0,"pageType":"error","path":"78756360/nrl.web/error","siteName":"NRL","age":"unknown","gen":"unknown","birthYear":"unknown"};
+      window.dataLayer = [window.NRL_PAGE_DATA];
+          window.NRL_RECAPTCHA_DATA = { key: "6Lerp2kUAAAAABYscFaWwboSP3DaaFwY9TjZOR26"};
+    window.NRL_SITE_CONFIG = {watchingThatEnabled: true, };
+  </script>
+    <script async src="https://www.googleoptimize.com/optimize.js?id=OPT-WF2LNWT"></script>
+
+<script type="text/javascript">
+<!-- Google Tag Manager -->
+(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PV42QSK');
+<!-- End Google Tag Manager -->
+</script>
+  
+
+
+<meta itemprop="name" property="og:title" content="Bad request or invalid characters in URL. (400)" />
+  <meta name="description" property="og:description" content="Bad request or invalid characters in URL. (400)" />
+  <meta itemprop="description" content="Bad request or invalid characters in URL. (400)" />
+
+
+  <meta itemprop="image" property="og:image" content="https://www.nrl.com/siteassets/branding/nrl-shareable-image.jpg?center=0.518%2C0.489&amp;preset=share" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@NRL" />
+<meta property="og:locale" content="en_AU" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.nrl.com/BadRequest?400;https://nrlweb-prod-delivery-site__ec98:80/siteassets/teams/first-grade-teams/parramatta-eels.png" />
+
+  <meta property="og:site_name" content="National Rugby League" />
+  <meta property="fb:app_id" content="6878248073" />
+
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/client/dist/favicons/nrl-180x180.png?bust=202310171">
+  <link rel="icon" type="image/png" sizes="16x16" href="/client/dist/favicons/nrl-16x16.png?bust=202310171">
+  <link rel="icon" type="image/png" sizes="32x32" href="/client/dist/favicons/nrl-32x32.png?bust=202310171">
+  <link rel="icon" type="image/png" sizes="192x192" href="/client/dist/favicons/nrl-192x192.png?bust=202310171">
+  <link rel="icon" type="image/png" sizes="260x260" href="/client/dist/favicons/nrl-260x260.png?bust=202310171">
+  <link rel="mask-icon" href="/client/dist/logos/nrl-silhouette.svg?bust=202310171" color="#111111">
+
+  
+
+  
+</head>
+<body class="t-root t-nrl ">
+  <noscript> <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PV42QSK" height="0" width="0" style="display:none;visibility:hidden"></iframe> </noscript>
+  <a aria-label="Press enter to skip to main content"
+     class="keyboard-navigation u-border"
+     href="#main-content">
+    Skip to main content
+  </a>
+  <div id="nrl-dummy-ad"
+       class="o-ad o-ad-dummy pub_300x250 pub_300x250m pub_728x90 text-ad textAd text_ad text_ads text-ads text-ad-links"></div>
+  <script>!function () { function o(o, e, n) { var i = o + "-svg", t = new XMLHttpRequest, s = document.body, d = document.createElement("div"), a = n || window.location.protocol + "//" + window.location.hostname + (window.location.port ? ":" + window.location.port : ""), c = a + e, l = " no-svg"; if (d.id = i, s.insertBefore(d, s.childNodes[0]), "withCredentials" in t) t.withCredentials, t.open("GET", c, !0); else { if ("undefined" == typeof XDomainRequest) return void (s.className += l); t = new XDomainRequest, t.open("GET", c) } t.onload = function () { d.className = "u-visually-hidden", d.innerHTML = t.responseText }, t.onerror = function () { s.className += l }, setTimeout(function () { t.send() }, 0) } o("icons", "/Client/dist/svg/icons-sprite.CBB083B4.svg")}()</script>
+
+
+  <div class="l-page ">
+    <div class="l-page__secondary">
+
+
+  <div id="vue-navigation"
+       class="pre-quench t- u-print-display-none">
+    <nav aria-labelledby="navigation-title"
+         class="navigation u-t-bg-color-primary "
+         role="navigation"
+         ref="navigation"
+         :class="[positionClass, {'is-expanded': state.isNavExpanded}]"
+    >
+
+      <div class="navigation__headroom" id="js-headroom">
+        <div class="navigation__header js-parallax-adjuster"
+             ref="navMainHeader"
+             v-on:touchmove="preventTouchMove($event, 'navMainHeader')">
+          <h2 id="navigation-title" class="u-visually-hidden">Main</h2>
+
+          <button aria-controls="navigation-menu"
+                  aria-haspopup="true"
+                  aria-label="Main navigation"
+                  class="navigation-hamburger u-disable-hover-when-supports-touch"
+                  v-bind:aria-expanded="state.isNavExpanded"
+                  v-on:click="toggleNav()">
+            <svg-icon class="navigation-hamburger__svg"
+                      v-bind:icon="state.isNavExpanded ? 'cross' : 'hamburger'"></svg-icon>
+          </button>
+
+          <div class="navigation-logo">
+            <a href="/" class="navigation-logo__link">
+              <img alt="nrl logo" class="navigation-logo__badge" src="/.theme/nrl/badge.svg?bust=202411120018" />
+              <img alt="nrl logo" class="navigation-logo__text" src="/.theme/nrl/text.svg?bust=202411120018" />
+            </a>
+          </div>
+          <a
+            aria-label="Search"
+            class="navigation-search__small-screen-button"
+            href="/search/"
+          >
+            <svg role="img" focusable="false" class="o-svg navigation-search__small-screen-svg">
+              <use xlink:href="#svg-magnifier"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div
+        class="navigation__menu u-t-border-color-tint"
+        id="navigation-menu"
+        tabindex="-1"
+        ref="navigationMenu"
+      >
+        <custom-scrollbar
+          class="o-themed-scrollbar u-flex-grow-1 u-overflow-hidden"
+          direction="vertical"
+          id="navigation"
+          ref="scrollbar"
+          thumb-class="u-t-bg-color-secondary"
+        >
+          <div
+            class="u-t-bg-color-primary u-t-border-color-tint-rm"
+            slot="custom-scroll-target"
+          >
+            <ul class="navigation-list navigation-list--primary">
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/news/"
+      v-bind:aria-current="isSelected('/news/', false)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/news/') }">
+      News
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/watch/"
+      v-bind:aria-current="isSelected('/watch/', false)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/watch/') }">
+      Watch
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/draw/"
+      v-bind:aria-current="isSelected('/draw/', false)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/draw/') }">
+      Draw
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/ladder/"
+      v-bind:aria-current="isSelected('/ladder/', false)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/ladder/') }">
+      Ladder
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/players/"
+      v-bind:aria-current="isSelected('/players/', false)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/players/') }">
+      Players
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/stats/"
+      v-bind:aria-current="isSelected('/stats/', false)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/stats/') }">
+      Stats
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="https://fantasy.nrl.com/"
+      rel="noopener noreferrer"
+      target="_blank"
+      v-bind:aria-current="isSelected('https://fantasy.nrl.com/', false)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('https://fantasy.nrl.com/') }">
+      Fantasy
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="https://tipping.nrl.com/"
+      rel="noopener noreferrer"
+      target="_blank"
+      v-bind:aria-current="isSelected('https://tipping.nrl.com/', false)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('https://tipping.nrl.com/') }">
+      Tipping
+    </a>
+  </li>
+                              <li>
+                  <collapsible
+                    button-class="navigation-list__link u-disable-hover-when-supports-touch u-spacing-pr-16 u-t-border-color-highlight-on-hover"
+                    is-menu-button
+                    v-bind:is-expanded-on-mount="isMoreExpandedOnMount"
+                    v-on:collapsible-toggled="handleMenuButtonToggle"
+                  >
+                    <template slot="button-content">
+                      More
+                    </template>
+                    <ul
+                      class="navigation-list navigation-list--more u-t-bg-color-tint"
+                      slot="button-target"
+                      v-cloak
+                    >
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/about-us/"
+      v-bind:aria-current="isSelected('/about-us/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/about-us/') }">
+      About Us
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/accommodation/"
+      v-bind:aria-current="isSelected('/accommodation/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/accommodation/') }">
+      Accommodation
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/careers/"
+      v-bind:aria-current="isSelected('/careers/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/careers/') }">
+      Careers
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="https://www.playrugbyleague.com/play/safety/child-safety/"
+      rel="noopener noreferrer"
+      target="_blank"
+      v-bind:aria-current="isSelected('https://www.playrugbyleague.com/play/safety/child-safety/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('https://www.playrugbyleague.com/play/safety/child-safety/') }">
+      Child Safety
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/clubs/"
+      v-bind:aria-current="isSelected('/clubs/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/clubs/') }">
+      Clubs
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/community/"
+      v-bind:aria-current="isSelected('/community/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/community/') }">
+      Community
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/competitions/"
+      v-bind:aria-current="isSelected('/competitions/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/competitions/') }">
+      Competitions
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="https://ladderpredictor.nrl.com/"
+      rel="noopener noreferrer"
+      target="_blank"
+      v-bind:aria-current="isSelected('https://ladderpredictor.nrl.com/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('https://ladderpredictor.nrl.com/') }">
+      Ladder Predictor
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/hall-of-fame/"
+      v-bind:aria-current="isSelected('/hall-of-fame/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/hall-of-fame/') }">
+      Hall of Fame
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/community/indigenous/"
+      v-bind:aria-current="isSelected('/community/indigenous/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/community/indigenous/') }">
+      Indigenous
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/operations/judiciary-and-match-review/"
+      v-bind:aria-current="isSelected('/operations/judiciary-and-match-review/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/operations/judiciary-and-match-review/') }">
+      Judiciary and Match Review
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/news/topic/media-release/"
+      v-bind:aria-current="isSelected('/news/topic/media-release/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/news/topic/media-release/') }">
+      Media Releases
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="https://officialmemorabilia.com.au/nrl-memorabilia/?ts=NRL"
+      rel="noopener noreferrer"
+      target="_blank"
+      v-bind:aria-current="isSelected('https://officialmemorabilia.com.au/nrl-memorabilia/?ts=NRL', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('https://officialmemorabilia.com.au/nrl-memorabilia/?ts=NRL') }">
+      Memorabilia
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="https://mixer.nrl.com/"
+      rel="noopener noreferrer"
+      target="_blank"
+      v-bind:aria-current="isSelected('https://mixer.nrl.com/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('https://mixer.nrl.com/') }">
+      Mixer
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/operations/"
+      v-bind:aria-current="isSelected('/operations/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/operations/') }">
+      Operations
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="https://www.playrugbyleague.com/"
+      v-bind:aria-current="isSelected('https://www.playrugbyleague.com/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('https://www.playrugbyleague.com/') }">
+      Play Rugby League
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/about-us/watch-nrl/"
+      v-bind:aria-current="isSelected('/about-us/watch-nrl/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/about-us/watch-nrl/') }">
+      Watch Overseas
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/wellbeing-and-education/"
+      v-bind:aria-current="isSelected('/wellbeing-and-education/', true)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/wellbeing-and-education/') }">
+      Wellbeing and Education
+    </a>
+  </li>
+                    </ul>
+                  </collapsible>
+                </li>
+            </ul>
+
+            <ul class="navigation-list navigation-list--secondary">
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/membership/"
+      v-bind:aria-current="isSelected('/membership/', false)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/membership/') }">
+      Membership
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/tickets/"
+      v-bind:aria-current="isSelected('/tickets/', false)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/tickets/') }">
+      Tickets
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="/hospitality/"
+      v-bind:aria-current="isSelected('/hospitality/', false)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/hospitality/') }">
+      Hospitality
+    </a>
+  </li>
+  <li>
+    <a 
+      class="navigation-list__link navigation-left-border u-disable-hover-when-supports-touch u-t-border-color-highlight-on-hover"
+      href="https://www.nrlshop.com/"
+      rel="noopener noreferrer"
+      target="_blank"
+      v-bind:aria-current="isSelected('https://www.nrlshop.com/', false)"
+      v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('https://www.nrlshop.com/') }">
+      Shop
+    </a>
+  </li>
+            </ul>
+
+          </div>
+        </custom-scrollbar>
+        <div>
+            <a
+              class="navigation-search navigation-left-border u-t-bg-color-tint u-t-border-color-highlight-on-hover"
+              href="/search/"
+              v-bind:aria-current="isSelected('/search/')"
+              v-bind:class="{ 'u-t-border-color-highlight is-selected': isSelected('/search/') }"
+            >
+              <div class="navigation-search__link">
+                <svg
+                  class="o-svg navigation-search__svg"
+                  focusable="false"
+                  role="img"
+                >
+                  <use xlink:href="#svg-magnifier" />
+                </svg>
+                Search
+              </div>
+            </a>
+                        <div class="navigation-account">
+                <a
+                  aria-controls="nrl-account"
+                  class="navigation-account-button navigation-left-border u-flex-grow-1 u-t-bg-color-tint u-t-border-color-highlight-on-hover"
+                  href="/account/login?ReturnUrl=%2Fsiteassets%2Fteams%2Ffirst-grade-teams%2Fparramatta-eels.png"
+                >
+                  <svg
+                    role="img"
+                    focusable="false"
+                    class="o-svg navigation-account-button__svg"
+                  >
+                    <use xlink:href="#svg-bust" />
+                  </svg>
+                  Log In
+                </a>
+              </div>
+
+        </div>
+      </div>
+    </nav>
+  </div>
+
+
+    </div>
+    <main class="l-page-primary" role="main">
+
+      <div class="u-visually-hidden"
+           data-nosnippet
+           id="main-content"
+           tabindex="-1">
+        You have skipped the navigation, tab for page content
+      </div>
+      <div class="l-page-primary__top ">
+
+        
+
+
+<div class="hero-wrap ">
+  <div class="hero js-parallax hero-size--default">
+    <picture>
+      <source media="(max-width: 47.9375em)" srcset="/resources/images/error/error-small-768x576.jpg" />
+      <img class="hero__image js-parallax__image" src="/resources/images/error/error-large-1736x630.jpg" alt="" />
+    </picture>
+  </div>
+</div>
+
+<div class="l-content">
+  <div class="l-content__primary">
+    <div class="u-spacing-pv-24">
+      <div class="l-grid">
+        <div class="l-grid__cell l-grid__cell--padding-16 l-grid__cell--padding-24-at-960">
+          <section class="o-section o-section--half-gutter">
+            <div class="section-title">
+              <h1 class="section-title__header">Oops. Something is wrong with that address (400)</h1>
+            </div>
+            <div class="l-grid">
+              <div class="l-grid__cell l-grid__cell--100 l-grid__cell--padding-right-24-at-960">
+                <p>The requested address might contain some invalid characters.</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      </div>
+      <div class="l-page-primary__bottom">
+
+
+
+
+<div class="acknowledgement-of-country t-nrl-only-indigenous u-t-bg-color-tint-rm u-display-flex u-flex-column u-flex-justify-content-center u-flex-align-items-center u-position-relative u-text-align-center" tabindex="0">
+  <picture>
+      <source 
+    media="(max-width: 768px)" 
+    srcset="/contentassets/9b2b28c0b90e434398cfd7da93d7ae59/acknowledgement/acknowledgement-of-country-mobile.jpg?preset=acknowledegement-of-country-375x308-webp"
+    type="image/webp"
+  />
+  <source 
+    media="(max-width: 768px)" 
+    srcset="/contentassets/9b2b28c0b90e434398cfd7da93d7ae59/acknowledgement/acknowledgement-of-country-mobile.jpg?preset=acknowledegement-of-country-375x308"
+    type="image/jpg"
+  />
+
+       <source 
+    srcset="/contentassets/9b2b28c0b90e434398cfd7da93d7ae59/acknowledgement/acknowledgement-of-country.jpg?preset=acknowledegement-of-country-1736x288-webp"
+    type="image/webp"
+  />
+  <img 
+    alt="Acknowledgement of Country"
+    loading="lazy"
+    class="acknowledgement-of-country__image u-height-100 u-width-100 u-object-fit-cover"
+    src="/contentassets/9b2b28c0b90e434398cfd7da93d7ae59/acknowledgement/acknowledgement-of-country.jpg?preset=acknowledegement-of-country-1736x288"
+  />
+
+  </picture>
+
+  <div class="acknowledgement-of-country__foreground">
+
+    <p class="acknowledgement-of-country__legend u-color-white u-spacing-ph-24">
+      National Rugby League respects and honours the Traditional Custodians of the land and pay our respects to their Elders past, present and future. We acknowledge the stories, traditions and living cultures of Aboriginal and Torres Strait Islander peoples on the lands we meet, gather and play on.
+    </p>
+
+  </div>
+</div>
+
+
+  <div class="u-bg-color-white u-print-display-none u-spacing-pt-24">
+    <div class="l-content">
+      <div class="l-grid">
+        <div class="l-grid__cell l-grid__cell--100 l-grid__cell--padding-16 l-grid__cell--padding-24-at-960">
+          <div class="l-grid l-grid--spacing-16 l-grid--spacing-24-at-960">
+            <div class="l-grid__cell l-grid__cell--100">
+              <div class="partner-groups u-display-flex u-spacing-n-mh-16">
+                  <section class="partner-group u-spacing-ph-16">
+                    <h4 class="o-text u-border-bottom u-letter-spacing-1 u-spacing-mb-24 u-spacing-pb-24 u-text-case-upper">Premier Partner</h4>
+                    <ul class="partner-group-list">
+                        <li>
+                          <a class="u-display-flex u-flex-justify-content-center u-width-100"
+                             href="https://www.telstra.com.au/plus/tickets/sports/nrl"
+                             rel="noopener noreferrer"
+                             target="_blank"
+                           >
+                            <img 
+                              alt="Telstra"
+                              class="partner__logo partner__logo--major"
+                              loading="lazy"
+                              src="https://www.nrl.com/siteassets/.lookups/sponsors/telstra_footer_new.svg?preset=sponsor-300x300" 
+                            />
+                          </a>
+                        </li>
+                    </ul>
+                  </section>
+                  <section class="partner-group u-spacing-ph-16">
+                    <h4 class="o-text u-border-bottom u-letter-spacing-1 u-spacing-mb-24 u-spacing-pb-24 u-text-case-upper">Media Partners</h4>
+                    <ul class="partner-group-list">
+                        <li>
+                          <a class="u-display-flex u-flex-justify-content-center u-width-100"
+                             href="https://9now.app.link/W4Gg4Y1gx8"
+                             rel="noopener noreferrer"
+                             target="_blank"
+                           >
+                            <img 
+                              alt="Nine"
+                              class="partner__logo "
+                              loading="lazy"
+                              src="https://www.nrl.com/siteassets/.lookups/sponsors/9_footer.svg?preset=sponsor-small" 
+                            />
+                          </a>
+                        </li>
+                        <li>
+                          <a class="u-display-flex u-flex-justify-content-center u-width-100"
+                             href="https://kayosports.com.au/?marketing=nrl-1&amp;extcamp=nrlwebpartnersfooter-prt-nrl-cta-acq-grc-nrl-kyo&amp;channel=nrl&amp;campaign=launch&amp;voucher=LAUNCH"
+                             rel="noopener noreferrer"
+                             target="_blank"
+                           >
+                            <img 
+                              alt="Kayo"
+                              class="partner__logo "
+                              loading="lazy"
+                              src="https://www.nrl.com/siteassets/.lookups/sponsors/kayo-square-footer.svg?preset=sponsor-small" 
+                            />
+                          </a>
+                        </li>
+                        <li>
+                          <a class="u-display-flex u-flex-justify-content-center u-width-100"
+                             href="https://www.foxtel.com.au/"
+                             rel="noopener noreferrer"
+                             target="_blank"
+                           >
+                            <img 
+                              alt="Foxtel"
+                              class="partner__logo "
+                              loading="lazy"
+                              src="https://www.nrl.com/siteassets/.lookups/sponsors/foxtel-square_foxtel_orange.svg?preset=sponsor-small" 
+                            />
+                          </a>
+                        </li>
+                    </ul>
+                  </section>
+                  <section class="partner-group u-spacing-ph-16">
+                    <h4 class="o-text u-border-bottom u-letter-spacing-1 u-spacing-mb-24 u-spacing-pb-24 u-text-case-upper">Major Partners</h4>
+                    <ul class="partner-group-list">
+                        <li>
+                          <a class="u-display-flex u-flex-justify-content-center u-width-100"
+                             href="http://www.sportsbet.com.au/"
+                             rel="noopener noreferrer"
+                             target="_blank"
+                           >
+                            <img 
+                              alt="Sportsbet"
+                              class="partner__logo "
+                              loading="lazy"
+                              src="https://www.nrl.com/siteassets/.lookups/sponsors/sportsbet-square.svg?preset=sponsor-small" 
+                            />
+                          </a>
+                        </li>
+                        <li>
+                          <a class="u-display-flex u-flex-justify-content-center u-width-100"
+                             href="https://www.ampol.com.au/"
+                             rel="noopener noreferrer"
+                             target="_blank"
+                           >
+                            <img 
+                              alt="Ampol"
+                              class="partner__logo "
+                              loading="lazy"
+                              src="https://www.nrl.com/siteassets/.lookups/sponsors/ampol_secondary_logo_fullcolour_rgb_100x100px-01-01.svg?preset=sponsor-small" 
+                            />
+                          </a>
+                        </li>
+                        <li>
+                          <a class="u-display-flex u-flex-justify-content-center u-width-100"
+                             href="https://www.victoriabitter.com.au/"
+                             rel="noopener noreferrer"
+                             target="_blank"
+                           >
+                            <img 
+                              alt="VB"
+                              class="partner__logo "
+                              loading="lazy"
+                              src="https://www.nrl.com/siteassets/.lookups/sponsors/vb-off-pack-footer-small.svg?preset=sponsor-small" 
+                            />
+                          </a>
+                        </li>
+                        <li>
+                          <a class="u-display-flex u-flex-justify-content-center u-width-100"
+                             href="https://hisense.com.au/"
+                             rel="noopener noreferrer"
+                             target="_blank"
+                           >
+                            <img 
+                              alt="Hisense"
+                              class="partner__logo "
+                              loading="lazy"
+                              src="https://www.nrl.com/siteassets/.lookups/sponsors/hisense_footer.svg?preset=sponsor-small" 
+                            />
+                          </a>
+                        </li>
+                        <li>
+                          <a class="u-display-flex u-flex-justify-content-center u-width-100"
+                             href="https://www.harveynorman.com.au/"
+                             rel="noopener noreferrer"
+                             target="_blank"
+                           >
+                            <img 
+                              alt="Harvey Norman"
+                              class="partner__logo "
+                              loading="lazy"
+                              src="https://www.nrl.com/siteassets/.lookups/sponsors/harvey-norman-footer.svg?preset=sponsor-small" 
+                            />
+                          </a>
+                        </li>
+                        <li>
+                          <a class="u-display-flex u-flex-justify-content-center u-width-100"
+                             href="https://www.kfc.com.au/"
+                             rel="noopener noreferrer"
+                             target="_blank"
+                           >
+                            <img 
+                              alt="KFC"
+                              class="partner__logo "
+                              loading="lazy"
+                              src="https://www.nrl.com/siteassets/.lookups/sponsors/kfc_footer.svg?preset=sponsor-small" 
+                            />
+                          </a>
+                        </li>
+                        <li>
+                          <a class="u-display-flex u-flex-justify-content-center u-width-100"
+                             href="http://www.bundabergrum.com.au/"
+                             rel="noopener noreferrer"
+                             target="_blank"
+                           >
+                            <img 
+                              alt="Bundaberg"
+                              class="partner__logo "
+                              loading="lazy"
+                              src="https://www.nrl.com/siteassets/.lookups/sponsors/bundaberg-footer-200x200-01.svg?preset=sponsor-small" 
+                            />
+                          </a>
+                        </li>
+                        <li>
+                          <a class="u-display-flex u-flex-justify-content-center u-width-100"
+                             href="https://www.chemistwarehouse.com.au/"
+                             rel="noopener noreferrer"
+                             target="_blank"
+                           >
+                            <img 
+                              alt="Chemist Warehouse"
+                              class="partner__logo "
+                              loading="lazy"
+                              src="https://www.nrl.com/siteassets/.lookups/sponsors/chemist-warehouse-footer-small-new.svg?preset=sponsor-small" 
+                            />
+                          </a>
+                        </li>
+                        <li>
+                          <a class="u-display-flex u-flex-justify-content-center u-width-100"
+                             href="https://swyftx.com/au/"
+                             rel="noopener noreferrer"
+                             target="_blank"
+                           >
+                            <img 
+                              alt="Swyftx"
+                              class="partner__logo "
+                              loading="lazy"
+                              src="https://www.nrl.com/siteassets/.lookups/sponsors/swyftx---footer.svg?preset=sponsor-small" 
+                            />
+                          </a>
+                        </li>
+                        <li>
+                          <a class="u-display-flex u-flex-justify-content-center u-width-100"
+                             href="https://www.westpac.com.au/"
+                             rel="noopener noreferrer"
+                             target="_blank"
+                           >
+                            <img 
+                              alt="Westpac"
+                              class="partner__logo "
+                              loading="lazy"
+                              src="https://www.nrl.com/siteassets/.lookups/sponsors/westpac_btyb.svg?preset=sponsor-small" 
+                            />
+                          </a>
+                        </li>
+                        <li>
+                          <a class="u-display-flex u-flex-justify-content-center u-width-100"
+                             href="https://www.kia.com/au/main.html"
+                             rel="noopener noreferrer"
+                             target="_blank"
+                           >
+                            <img 
+                              alt="Kia"
+                              class="partner__logo "
+                              loading="lazy"
+                              src="https://www.nrl.com/siteassets/sponsorship/kia_logo_footer.svg?preset=sponsor-small" 
+                            />
+                          </a>
+                        </li>
+                        <li>
+                          <a class="u-display-flex u-flex-justify-content-center u-width-100"
+                             href="https://www.youi.com.au/car-insurance"
+                             rel="noopener noreferrer"
+                             target="_blank"
+                           >
+                            <img 
+                              alt="Youi"
+                              class="partner__logo "
+                              loading="lazy"
+                              src="https://www.nrl.com/siteassets/.lookups/sponsors/youi-footer-small-2019.svg?preset=sponsor-small" 
+                            />
+                          </a>
+                        </li>
+                    </ul>
+                  </section>
+              </div>
+                <a href="/about-us/partners/" class="o-button o-button--solid o-button--subdued u-spacing-mb-16 u-spacing-mh-auto">
+                  View All Partners
+                </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<footer class="footer u-t-bg-color-tint-rm" id="vue-footer">
+  <div class="l-content">
+    <div class="l-content__primary">
+        <div class="footer__social-container u-display-flex u-flex-align-items-center u-print-display-none">
+          <div class="footer__social-title u-spacing-mr-8 u-spacing-pr-4">
+            <h3 class="footer__title u-line-height-1">Follow the NRL</h3>
+          </div>
+          <ul class="u-display-flex">
+                <li class="footer__social-item">
+      <a
+        aria-label="Follow on TikTok"
+        class="footer__social-link u-flex-center u-t-color-highlight-on-hover"
+        href="https://www.tiktok.com/@nrl"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+<svg 
+  class="o-svg footer__social-svg" 
+  data-icon="logo-tik-tok"
+  focusable="false" 
+  role="img" 
+>
+  <use xlink:href="#svg-logo-tik-tok"></use>
+</svg>
+      </a>
+    </li>
+
+                <li class="footer__social-item">
+      <a
+        aria-label="Follow on Facebook"
+        class="footer__social-link u-flex-center u-t-color-highlight-on-hover"
+        href="https://www.facebook.com/nrl/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+<svg 
+  class="o-svg footer__social-svg" 
+  data-icon="logo-facebook"
+  focusable="false" 
+  role="img" 
+>
+  <use xlink:href="#svg-logo-facebook"></use>
+</svg>
+      </a>
+    </li>
+
+                <li class="footer__social-item">
+      <a
+        aria-label="Follow on Twitter"
+        class="footer__social-link u-flex-center u-t-color-highlight-on-hover"
+        href="https://twitter.com/NRL"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+<svg 
+  class="o-svg footer__social-svg" 
+  data-icon="logo-twitter"
+  focusable="false" 
+  role="img" 
+>
+  <use xlink:href="#svg-logo-twitter"></use>
+</svg>
+      </a>
+    </li>
+
+                <li class="footer__social-item">
+      <a
+        aria-label="Follow on Instagram"
+        class="footer__social-link u-flex-center u-t-color-highlight-on-hover"
+        href="https://www.instagram.com/nrl/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+<svg 
+  class="o-svg footer__social-svg" 
+  data-icon="logo-instagram"
+  focusable="false" 
+  role="img" 
+>
+  <use xlink:href="#svg-logo-instagram"></use>
+</svg>
+      </a>
+    </li>
+
+            
+            
+            
+          </ul>
+        </div>
+              <div class="footer-nav u-display-flex u-flex-wrap-yes u-print-display-none">
+          <nav
+            aria-labelledby="navigation-club-sites-title"
+            class="footer-nav__club"
+            role="navigation"
+          >
+            <collapsible
+              v-bind:is-menu-button="true"
+              v-bind:static-at-width="768"
+            >
+              <h3
+                class="footer__title"
+                id="navigation-club-sites-title"
+                slot="button-content"
+              >
+                Club Sites
+              </h3>
+              <ul 
+                  class="footer__badge-grid u-spacing-pt-8"
+                  slot="button-target"
+               >
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.broncos.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Broncos logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/broncos/badge-basic24.svg?bust=202411120018"
+        />
+          Broncos
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.bulldogs.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Bulldogs logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/bulldogs/badge-basic24.svg?bust=202411120018"
+        />
+          Bulldogs
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.cowboys.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Cowboys logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/cowboys/badge-basic24-light.svg?bust=202411120018"
+        />
+          Cowboys
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.dolphinsnrl.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Dolphins logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/dolphins/badge-basic24.svg?bust=202411120018"
+        />
+          Dolphins
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.dragons.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Dragons logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/dragons/badge-basic24-light.svg?bust=202411120018"
+        />
+          Dragons
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.parraeels.com.au/"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Eels logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/eels/badge-basic24.svg?bust=202411120018"
+        />
+          Eels
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.newcastleknights.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Knights logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/knights/badge-basic24.svg?bust=202411120018"
+        />
+          Knights
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.penrithpanthers.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Panthers logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/panthers/badge-basic24.svg?bust=202411120018"
+        />
+          Panthers
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.rabbitohs.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Rabbitohs logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/rabbitohs/badge-basic24-light.svg?bust=202411120018"
+        />
+          Rabbitohs
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.raiders.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Raiders logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/raiders/badge-basic24.svg?bust=202411120018"
+        />
+          Raiders
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.roosters.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Roosters logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/roosters/badge-basic24.svg?bust=202411120018"
+        />
+          Roosters
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.seaeagles.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Sea Eagles logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/sea-eagles/badge-basic24.svg?bust=202411120018"
+        />
+          Sea Eagles
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.sharks.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Sharks logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/sharks/badge-basic24-light.svg?bust=202411120018"
+        />
+          Sharks
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.melbournestorm.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Storm logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/storm/badge-basic24-light.svg?bust=202411120018"
+        />
+          Storm
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.titans.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Titans logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/titans/badge-basic24.svg?bust=202411120018"
+        />
+          Titans
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.warriors.kiwi"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Warriors logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/warriors/badge-basic24.svg?bust=202411120018"
+        />
+          Warriors
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.weststigers.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="Wests Tigers logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/wests-tigers/badge-basic24.svg?bust=202411120018"
+        />
+          Wests Tigers
+      </div>
+    </a>
+  </li>
+
+              </ul>
+            </collapsible>
+          </nav>
+          <nav 
+            aria-labelledby="navigation-state-sites-title"
+            class="footer-nav__state"
+            role="navigation"
+          >
+            <collapsible
+              v-bind:is-menu-button="true"
+              v-bind:static-at-width="768"
+            >
+              <h3
+                class="footer__title"
+                id="navigation-state-sites-title"
+                slot="button-content"
+              >
+                State Sites
+              </h3>
+              <ul
+                class="footer__badge-grid footer__badge-grid--states u-spacing-pt-8"
+                slot="button-target"
+              >
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="http://www.nswrl.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="NSW logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/nswrl/badge.svg?bust=202411120018"
+        />
+          NSW
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.nrlnt.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="NT logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/nt/badge.svg?bust=202411120018"
+        />
+          NT
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="http://www.qrl.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="QLD logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/qrl/badge.svg?bust=202411120018"
+        />
+          QLD
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.nrlsa.com.au/"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="SA logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/sa/badge.svg?bust=202411120018"
+        />
+          SA
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.nrlvic.com/"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="TAS logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/tas/badge.svg?bust=202411120018"
+        />
+          TAS
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="https://www.nrlvic.com/"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="VIC logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/vic/badge.svg?bust=202411120018"
+        />
+          VIC
+      </div>
+    </a>
+  </li>
+
+                    <li>
+    <a
+      class="footer-nav-link u-t-color-highlight-on-hover"
+      href="http://nrlwa.com.au"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <div class="footer-nav-link__content">
+        <img
+          alt="WA logo"
+          class="footer-nav-link__svg"
+          loading="lazy"
+          src="/.theme/wa/badge.svg?bust=202411120018"
+        />
+          WA
+      </div>
+    </a>
+  </li>
+
+              </ul>
+            </collapsible>
+          </nav>
+        </div>
+        <div class="footer-legal u-spacing-pv-24">
+          <ul class="u-flex-center u-gap-16 u-gap-24-at-600 u-print-display-none">
+          <li><a class="footer-legal__link-text u-t-color-highlight-on-hover" href="/terms-of-use">Terms of Use</a></li>
+          <li><a class="footer-legal__link-text u-t-color-highlight-on-hover" href="/privacy-policy">Privacy Policy</a></li>
+        </ul>
+        <ul class="u-flex-center u-gap-16 u-gap-24-at-600 u-print-display-none u-spacing-pt-24-until-768 u-spacing-ph-24">
+          <li><a class="footer-legal__link-text u-t-color-highlight-on-hover" href="/careers">Careers</a></li>
+          <li><a class="footer-legal__link-text u-t-color-highlight-on-hover" href="https://nationalrugbyleague.atlassian.net/wiki/spaces/NKB/overview">Help</a></li>
+          <li><a class="footer-legal__link-text u-t-color-highlight-on-hover" href="/contact-us">Contact Us</a></li>
+          <li><a class="footer-legal__link-text u-t-color-highlight-on-hover" href="/advertise-with-us">Advertise With Us</a></li>
+        </ul>
+        <a
+          class="footer-legal__copyright footer-legal__link-text u-spacing-pt-24-until-768 u-t-color-highlight-on-hover"
+          href="https://www.nrl.com"
+          rel="noopener noreferrer"
+          target="_blank" 
+        >
+          <span>&copy; 2024 National Rugby League</span> 
+          <img
+            alt="nrl logo"
+            class="footer-nav-link__svg footer-legal__copyright-svg" 
+            loading="lazy" 
+            src="/.theme/nrl/badge.svg?bust=202411120018"
+          />
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="/Client/dist/vendor.AA4CE48F.js"></script>
+  <script src="/Client/dist/nrl.3316A48F.js"></script>
+      </body>
+</html>
