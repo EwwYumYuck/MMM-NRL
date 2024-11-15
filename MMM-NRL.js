@@ -19,7 +19,10 @@ Module.register("MMM-NRL", {
 
     // Define required styles
     getStyles: function() {
-        return ["MMM-NRL.css"];
+        return [
+            "MMM-NRL.css",
+            "font-awesome.css"
+        ];
     },
 
     // Override start method
@@ -55,139 +58,100 @@ Module.register("MMM-NRL", {
 
     // Override getDom method
     getDom: function() {
-        Log.debug(this.name + ": Updating DOM");
-        const wrapper = document.createElement("div");
-        wrapper.className = "mmm-nrl";
-
-        if (this.errorMessage) {
-            Log.error(this.name + ": Displaying error message:", this.errorMessage);
-            
-            // Check if it's an off-season error
-            if (this.errorMessage.includes("404") || this.errorMessage.includes("No games found")) {
-                const currentMonth = new Date().getMonth() + 1; // 1-12
-                if (currentMonth >= 10) {
-                    wrapper.innerHTML = "NRL is currently in off-season. The 2024 season will begin in March!";
-                } else if (currentMonth <= 2) {
-                    wrapper.innerHTML = "NRL pre-season starts soon. The 2024 season will begin in March!";
-                } else {
-                    wrapper.innerHTML = this.errorMessage;
-                }
-            } else {
-                wrapper.innerHTML = this.errorMessage;
-            }
-            
-            wrapper.className = "dimmed light small";
-            return wrapper;
-        }
+        var wrapper = document.createElement("div");
+        wrapper.className = "wrapper";
 
         if (!this.loaded) {
-            Log.debug(this.name + ": Module not yet loaded, showing loading message");
-            wrapper.innerHTML = "Loading NRL data...";
+            wrapper.innerHTML = this.translate("LOADING");
             wrapper.className = "dimmed light small";
             return wrapper;
         }
 
         if (!this.matches || this.matches.length === 0) {
-            Log.debug(this.name + ": No matches available to display");
             wrapper.innerHTML = "No matches available";
             wrapper.className = "dimmed light small";
             return wrapper;
         }
 
+        var table = document.createElement("table");
+        table.className = "small";
+
+        // Create header row
+        var headerRow = document.createElement("tr");
+        headerRow.className = "title bright";
+        
+        var titleCell = document.createElement("td");
+        titleCell.colSpan = 5;
+        titleCell.innerHTML = this.matches[0].round;
+        headerRow.appendChild(titleCell);
+        table.appendChild(headerRow);
+
         // Create matches table
-        Log.debug(this.name + ": Creating table with " + this.matches.length + " matches");
-        const table = this.createMatchesTable();
-        wrapper.appendChild(table);
+        this.matches.forEach((match) => {
+            var row = document.createElement("tr");
+            row.className = match.status === "LIVE" ? "bright" : "dimmed";
 
-        return wrapper;
-    },
-
-    createMatchesTable: function() {
-        const table = document.createElement("table");
-        table.className = "small nrl-table";
-
-        this.matches.forEach((match, index) => {
-            Log.debug(this.name + ": Processing match " + index, match);
-            
-            // Create match row
-            const row = document.createElement("tr");
-            row.className = "title bright match-row";
-
-            // Home team cell
-            const homeCell = document.createElement("td");
-            homeCell.className = "align-right team-cell";
-            
-            // Add home team logo if enabled
+            // Home team
+            var homeCell = document.createElement("td");
+            homeCell.className = "align-right";
             if (this.config.showTeamLogos) {
-                const homeLogo = document.createElement("img");
-                homeLogo.src = match.homeTeam.logo;
+                var homeLogo = document.createElement("img");
+                homeLogo.src = this.file("icons/" + match.homeTeam.toLowerCase().replace(/[^a-z0-9]/g, '') + ".png");
                 homeLogo.className = "team-logo";
-                homeLogo.alt = match.homeTeam.name;
                 homeCell.appendChild(homeLogo);
             }
+            homeCell.innerHTML += " " + match.homeTeam;
+            row.appendChild(homeCell);
 
-            // Add home team name
-            homeCell.innerHTML += match.homeTeam.name;
-
-            // Add table position if enabled
-            if (this.config.showTablePosition && match.homeTeam.position) {
-                const homePos = document.createElement("span");
-                homePos.className = "table-position";
-                homePos.innerHTML = `[${match.homeTeam.position}]`;
-                homeCell.appendChild(homePos);
+            // Score/Time
+            var scoreCell = document.createElement("td");
+            scoreCell.className = "align-center score" + (match.status === "LIVE" ? " live" : "");
+            if (match.status === "SCHEDULED") {
+                scoreCell.innerHTML = match.time;
+            } else {
+                scoreCell.innerHTML = (match.homeScore !== null ? match.homeScore : "-") + 
+                                    " - " + 
+                                    (match.awayScore !== null ? match.awayScore : "-");
             }
+            row.appendChild(scoreCell);
 
-            // Score cell
-            const scoreCell = document.createElement("td");
-            scoreCell.className = "score-cell " + match.status.toLowerCase();
-            
-            if (this.config.showScores) {
-                const scoreText = match.status === "SCHEDULED" 
-                    ? moment(match.startTime).format("HH:mm")
-                    : `${match.homeTeam.score} - ${match.awayTeam.score}`;
-                scoreCell.innerHTML = scoreText;
-            }
-
-            // Away team cell
-            const awayCell = document.createElement("td");
-            awayCell.className = "align-left team-cell";
-
-            // Add away team name
-            awayCell.innerHTML = match.awayTeam.name;
-
-            // Add table position if enabled
-            if (this.config.showTablePosition && match.awayTeam.position) {
-                const awayPos = document.createElement("span");
-                awayPos.className = "table-position";
-                awayPos.innerHTML = `[${match.awayTeam.position}]`;
-                awayCell.appendChild(awayPos);
-            }
-
-            // Add away team logo if enabled
+            // Away team
+            var awayCell = document.createElement("td");
+            awayCell.className = "align-left";
+            awayCell.innerHTML = match.awayTeam + " ";
             if (this.config.showTeamLogos) {
-                const awayLogo = document.createElement("img");
-                awayLogo.src = match.awayTeam.logo;
+                var awayLogo = document.createElement("img");
+                awayLogo.src = this.file("icons/" + match.awayTeam.toLowerCase().replace(/[^a-z0-9]/g, '') + ".png");
                 awayLogo.className = "team-logo";
-                awayLogo.alt = match.awayTeam.name;
                 awayCell.appendChild(awayLogo);
             }
-
-            // Add round and venue info
-            const infoCell = document.createElement("td");
-            infoCell.className = "dimmed small";
-            infoCell.innerHTML = `R${match.round} - ${match.venue}`;
-
-            // Append all cells to row
-            row.appendChild(homeCell);
-            row.appendChild(scoreCell);
             row.appendChild(awayCell);
-            row.appendChild(infoCell);
 
-            // Append row to table
+            // Status/Time
+            var timeCell = document.createElement("td");
+            timeCell.className = "align-right dimmed light time";
+            timeCell.innerHTML = match.status === "LIVE" ? "LIVE" : 
+                               (match.status === "COMPLETED" ? "FT" : "");
+            row.appendChild(timeCell);
+
+            // Venue
+            var venueCell = document.createElement("td");
+            venueCell.className = "align-left dimmed light venue";
+            venueCell.innerHTML = match.venue;
+            row.appendChild(venueCell);
+
             table.appendChild(row);
         });
 
-        return table;
+        wrapper.appendChild(table);
+        return wrapper;
+    },
+
+    // Helper function to get ordinal suffix for round number
+    getOrdinal: function(n) {
+        var s = ["th", "st", "nd", "rd"];
+        var v = n % 100;
+        return n + (s[(v - 20) % 10] || s[v] || s[0]);
     },
 
     // Schedule next update
@@ -205,18 +169,9 @@ Module.register("MMM-NRL", {
 
     // Handle notifications from node helper
     socketNotificationReceived: function(notification, payload) {
-        if (notification === "NRL_DATA") {
+        if (notification === "NRL_MATCHES") {
+            this.matches = payload;
             this.loaded = true;
-            this.matches = payload.matches;
-            this.errorMessage = null;
-            this.updateDom(this.config.animationSpeed);
-        } else if (notification === "NRL_DATA_ERROR") {
-            this.errorMessage = payload.error;
-            this.updateDom(this.config.animationSpeed);
-        } else if (notification === "NRL_OFF_SEASON") {
-            this.loaded = true;
-            this.matches = [];
-            this.errorMessage = payload.error;
             this.updateDom(this.config.animationSpeed);
         }
     }

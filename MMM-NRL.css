@@ -1,50 +1,75 @@
-.mmm-nrl {
+.MMM-NRL .wrapper {
     width: 100%;
-    text-align: center;
+    max-width: 500px;
+    margin: 0 auto;
 }
 
-.nrl-table {
+.MMM-NRL table {
     width: 100%;
     border-spacing: 2px;
     border-collapse: separate;
     color: #fff;
 }
 
-.match-row {
-    line-height: 1.5em;
+.MMM-NRL .title {
+    text-align: center;
+    padding: 0 0 10px 0;
+    font-size: 15px;
+    font-weight: bold;
 }
 
-.team-cell {
-    padding: 0 10px;
-    white-space: nowrap;
+.MMM-NRL tr {
+    line-height: 1.3;
 }
 
-.score-cell {
-    min-width: 60px;
-    padding: 0 5px;
+.MMM-NRL td {
+    padding: 2px 4px;
 }
 
-.score-cell.live {
-    color: #ff0;
-}
-
-.score-cell.completed {
-    color: #999;
-}
-
-.score-cell.upcoming {
-    color: #0f0;
-}
-
-.team-logo {
+.MMM-NRL .team-logo {
     height: 20px;
-    width: auto;
+    width: 20px;
     vertical-align: middle;
-    margin: 0 5px;
+    margin: 0 4px;
 }
 
-.table-position {
-    font-size: 0.8em;
-    color: #999;
-    margin: 0 5px;
+.MMM-NRL .score {
+    min-width: 60px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.MMM-NRL .align-right {
+    text-align: right;
+}
+
+.MMM-NRL .align-left {
+    text-align: left;
+}
+
+.MMM-NRL .align-center {
+    text-align: center;
+}
+
+.MMM-NRL .time,
+.MMM-NRL .venue {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.MMM-NRL .venue {
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Dimmed state for non-live matches */
+.MMM-NRL .dimmed {
+    opacity: 0.6;
+}
+
+/* Bright state for live matches */
+.MMM-NRL .bright {
+    opacity: 1;
 }

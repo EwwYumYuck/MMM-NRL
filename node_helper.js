@@ -34,20 +34,15 @@ module.exports = NodeHelper.create({
             // During late year (October-December), try completed season first
             const currentMonth = new Date().getMonth() + 1; // 1-12
             if (currentMonth >= 10) {
-                // Try current year first (completed season)
                 seasons.push(currentYear);
-                // Don't try next year until closer to season start
             } else if (currentMonth <= 2) {
-                // During early year (Jan-Feb), try previous year's completed season
                 seasons.push(currentYear - 1);
-                // Then try current year for pre-season
                 seasons.push(currentYear);
-            } else if (currentMonth >= 3 && currentMonth <= 9) {
-                // During regular season (March-September), just try current year
+            } else {
                 seasons.push(currentYear);
             }
 
-            // If we're close to the new season (Jan-Mar), add next season for pre-season games
+            // If we're close to the new season (Jan-Mar), add next season
             if (currentMonth >= 1 && currentMonth <= 3) {
                 seasons.push(currentYear + 1);
             }
@@ -56,7 +51,6 @@ module.exports = NodeHelper.create({
             
             let data = null;
             let error = null;
-            let isOffSeason = false;
             
             // Try each season until we get data
             for (const season of seasons) {
@@ -76,21 +70,16 @@ module.exports = NodeHelper.create({
                     if (!response.ok) {
                         error = `HTTP error! status: ${response.status} for season ${season}`;
                         console.log(this.name + ": " + error);
-                        if (response.status === 404) {
-                            isOffSeason = true;
-                        }
                         continue;
                     }
 
                     data = await response.json();
                     if (data && Array.isArray(data.games) && data.games.length > 0) {
                         console.log(this.name + `: Successfully fetched data from API for season ${season}`);
-                        isOffSeason = false;
                         break;
                     } else {
                         error = `No games found in API response for season ${season}`;
                         console.log(this.name + ": " + error);
-                        isOffSeason = true;
                     }
                 } catch (err) {
                     error = `Error fetching season ${season}: ${err.message}`;
@@ -98,50 +87,58 @@ module.exports = NodeHelper.create({
                 }
             }
 
-            // If we couldn't get data from any season and it's off-season
-            if (isOffSeason) {
-                console.log(this.name + ": Currently in off-season period");
-                this.sendSocketNotification("NRL_OFF_SEASON", {
-                    error: "Currently in off-season. The 2025 NRL season begins in March 2025!"
-                });
-                return;
-            }
-
-            // If we couldn't get data for other reasons, use fallback data
+            // If we couldn't get data, use mock data
             if (!data || !Array.isArray(data.games) || data.games.length === 0) {
-                console.log(this.name + ": No valid data found for any season, using fallback data");
+                console.log(this.name + ": No valid data found, using mock data");
                 console.log(this.name + ": Last error was: " + error);
                 
-                // Send off-season notification if all attempts were 404
-                if (error.includes("404")) {
-                    this.sendSocketNotification("NRL_OFF_SEASON", {
-                        error: error
-                    });
-                    return;
-                }
+                // Use mock data showing next season's first round
+                const nextYear = new Date().getFullYear() + 1;
+                const marchFirst = new Date(nextYear, 2, 1, 19, 30); // March 1st, 7:30 PM
                 
-                // Use mock data during off-season or when API is unavailable
                 data = {
-                    games: [{
-                        homeTeam: {
-                            nickName: "Broncos",
-                            teamName: "Brisbane Broncos",
-                            ladderPosition: 4
+                    games: [
+                        {
+                            homeTeam: {
+                                nickName: "Panthers",
+                                teamName: "Penrith Panthers",
+                                ladderPosition: 1
+                            },
+                            awayTeam: {
+                                nickName: "Broncos",
+                                teamName: "Brisbane Broncos",
+                                ladderPosition: 2
+                            },
+                            gameState: "Pre Game",
+                            kickOffDate: marchFirst.toISOString(),
+                            roundNumber: 1,
+                            venue: { name: "BlueBet Stadium" },
+                            scores: {
+                                home: 0,
+                                away: 0
+                            }
                         },
-                        awayTeam: {
-                            nickName: "Storm",
-                            teamName: "Melbourne Storm",
-                            ladderPosition: 2
-                        },
-                        gameState: "Pre Game",
-                        kickOffDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString(),
-                        roundNumber: 1,
-                        venue: { name: "Suncorp Stadium" },
-                        scores: {
-                            home: 0,
-                            away: 0
+                        {
+                            homeTeam: {
+                                nickName: "Storm",
+                                teamName: "Melbourne Storm",
+                                ladderPosition: 3
+                            },
+                            awayTeam: {
+                                nickName: "Warriors",
+                                teamName: "Warriors",
+                                ladderPosition: 4
+                            },
+                            gameState: "Pre Game",
+                            kickOffDate: new Date(marchFirst.getTime() + 24 * 60 * 60 * 1000).toISOString(),
+                            roundNumber: 1,
+                            venue: { name: "AAMI Park" },
+                            scores: {
+                                home: 0,
+                                away: 0
+                            }
                         }
-                    }]
+                    ]
                 };
             }
 
@@ -155,34 +152,26 @@ module.exports = NodeHelper.create({
                         
                         const getTeamName = (team) => {
                             if (!team) return 'Unknown Team';
-                            const name = team.nickName || team.teamName || 'Unknown Team';
-                            console.log(this.name + ": Resolved team name:", name);
-                            return name;
+                            return team.nickName || team.teamName || 'Unknown Team';
                         };
 
-                        const getTeamLogo = (team) => {
-                            const name = getTeamName(team);
-                            const logoPath = `modules/MMM-NRL/logos/${name.toLowerCase().replace(/[^a-z0-9]/g, '')}.svg`;
-                            console.log(this.name + ": Generated logo path:", logoPath);
-                            return logoPath;
-                        };
+                        const kickOffDate = new Date(game.kickOffDate);
+                        const now = new Date();
+                        const status = this.getMatchStatus(game.gameState);
+                        const isUpcoming = status === 'SCHEDULED' && kickOffDate > now;
+                        const isLive = status === 'LIVE';
+                        const showScore = !isUpcoming || config.showScores;
 
                         return {
-                            homeTeam: {
-                                name: getTeamName(game.homeTeam),
-                                score: game.scores?.home || 0,
-                                position: game.homeTeam?.ladderPosition || null,
-                                logo: getTeamLogo(game.homeTeam)
-                            },
-                            awayTeam: {
-                                name: getTeamName(game.awayTeam),
-                                score: game.scores?.away || 0,
-                                position: game.awayTeam?.ladderPosition || null,
-                                logo: getTeamLogo(game.awayTeam)
-                            },
-                            status: this.getMatchStatus(game.gameState),
-                            startTime: game.kickOffDate,
-                            round: game.roundNumber,
+                            homeTeam: getTeamName(game.homeTeam),
+                            awayTeam: getTeamName(game.awayTeam),
+                            homeScore: showScore ? (game.scores?.home || 0) : null,
+                            awayScore: showScore ? (game.scores?.away || 0) : null,
+                            status: status,
+                            time: isUpcoming ? 
+                                this.formatKickoffTime(kickOffDate) : 
+                                (isLive ? 'LIVE' : this.formatGameTime(kickOffDate)),
+                            round: 'Round ' + game.roundNumber,
                             venue: game.venue?.name || 'TBA'
                         };
                     } catch (err) {
@@ -190,41 +179,32 @@ module.exports = NodeHelper.create({
                         return null;
                     }
                 }).filter(match => match !== null);
-            }
 
-            console.log(this.name + ": Total matches processed:", matches.length);
+                // Sort matches: Live first, then upcoming, then completed
+                matches.sort((a, b) => {
+                    const statusOrder = { 'LIVE': 0, 'SCHEDULED': 1, 'COMPLETED': 2 };
+                    if (statusOrder[a.status] !== statusOrder[b.status]) {
+                        return statusOrder[a.status] - statusOrder[b.status];
+                    }
+                    // For same status, sort by time
+                    return new Date(a.time) - new Date(b.time);
+                });
+            }
 
             // Filter based on mode
-            console.log(this.name + ": Filtering matches by mode:", config.mode);
             if (config.mode !== "all") {
-                if (config.mode === "live") {
-                    matches = matches.filter(match => match.status === "LIVE");
-                } else if (config.mode === "upcoming") {
-                    matches = matches.filter(match => match.status === "SCHEDULED");
-                } else if (config.mode === "completed") {
-                    matches = matches.filter(match => match.status === "COMPLETED");
-                }
-                console.log(this.name + ": Matches after status filtering:", matches.length);
+                matches = matches.filter(match => {
+                    if (config.mode === "live") return match.status === "LIVE";
+                    if (config.mode === "upcoming") return match.status === "SCHEDULED";
+                    if (config.mode === "completed") return match.status === "COMPLETED";
+                    return true;
+                });
             }
 
-            // Filter by teams if specified
-            if (config.focus_on && config.focus_on.length > 0) {
-                console.log(this.name + ": Filtering for teams:", config.focus_on);
-                matches = matches.filter(match => 
-                    config.focus_on.includes(match.homeTeam.name) || 
-                    config.focus_on.includes(match.awayTeam.name)
-                );
-                console.log(this.name + ": Matches after team filtering:", matches.length);
-            }
+            // Limit entries
+            matches = matches.slice(0, config.maximumEntries || 10);
 
-            // Limit the number of matches
-            matches = matches.slice(0, config.maximumEntries);
-            console.log(this.name + ": Final matches after limiting to " + config.maximumEntries + ":", matches.length);
-
-            // Send the processed data back to the module
-            this.sendSocketNotification("NRL_DATA", { matches });
-            console.log(this.name + ": Data sent back to module");
-
+            this.sendSocketNotification("NRL_MATCHES", matches);
         } catch (error) {
             console.error(this.name + ": Error fetching NRL data:", error);
             
@@ -233,31 +213,47 @@ module.exports = NodeHelper.create({
                 console.log(this.name + ": Using mock data in development mode");
                 const mockMatches = [
                     {
-                        homeTeam: {
-                            name: "Broncos",
-                            score: 24,
-                            position: 4,
-                            logo: "modules/MMM-NRL/logos/broncos.svg"
-                        },
-                        awayTeam: {
-                            name: "Storm",
-                            score: 18,
-                            position: 2,
-                            logo: "modules/MMM-NRL/logos/storm.svg"
-                        },
+                        homeTeam: "Broncos",
+                        awayTeam: "Storm",
+                        homeScore: 24,
+                        awayScore: 18,
                         status: "COMPLETED",
-                        startTime: new Date().toISOString(),
+                        time: new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }),
                         round: "Round 1",
                         venue: "Suncorp Stadium"
                     }
                 ];
-                this.sendSocketNotification("NRL_DATA", { matches: mockMatches });
+                this.sendSocketNotification("NRL_MATCHES", mockMatches);
             } else {
                 this.sendSocketNotification("NRL_DATA_ERROR", { 
                     error: "Unable to fetch NRL data. The NRL season might be in break, or there might be an issue with the API connection." 
                 });
             }
         }
+    },
+
+    formatKickoffTime: function(date) {
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        if (date.toDateString() === today.toDateString()) {
+            return 'Today ' + date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
+        } else if (date.toDateString() === tomorrow.toDateString()) {
+            return 'Tomorrow ' + date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
+        } else {
+            return date.toLocaleDateString('en-AU', { 
+                weekday: 'short', 
+                day: 'numeric', 
+                month: 'short',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+    },
+
+    formatGameTime: function(date) {
+        return date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
     },
 
     getMatchStatus: function(apiStatus) {
