@@ -1,0 +1,21 @@
+{
+  "name": "MMM-NRL",
+  "version": "0.1.0",
+  "description": "MagicMirror module for NRL scores and drawer",
+  "author": "Daniel Uili",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EwwYumYuck/MMM-NRL.git"
+  },
+  "keywords": [
+    "magicmirror",
+    "nrl",
+    "rugby",
+    "sports"
+  ],
+  "dependencies": {
+    "node-fetch": "^2.6.1"
+  },
+  "main": "./index.js"
+}
