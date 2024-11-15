@@ -35,13 +35,13 @@ module.exports = NodeHelper.create({
                             name: "Warriors",
                             score: 24,
                             position: 4,
-                            logo: "modules/MMM-NRL/logos/warriors.png"
+                            logo: "modules/MMM-NRL/logos/warriors.svg"
                         },
                         awayTeam: {
                             name: "Broncos",
                             score: 18,
                             position: 2,
-                            logo: "modules/MMM-NRL/logos/broncos.png"
+                            logo: "modules/MMM-NRL/logos/broncos.svg"
                         },
                         status: "IN_PROGRESS",
                         startTime: new Date().toISOString()
@@ -51,13 +51,13 @@ module.exports = NodeHelper.create({
                             name: "Storm",
                             score: 30,
                             position: 1,
-                            logo: "modules/MMM-NRL/logos/storm.png"
+                            logo: "modules/MMM-NRL/logos/storm.svg"
                         },
                         awayTeam: {
                             name: "Roosters",
                             score: 22,
                             position: 3,
-                            logo: "modules/MMM-NRL/logos/roosters.png"
+                            logo: "modules/MMM-NRL/logos/roosters.svg"
                         },
                         status: "COMPLETED",
                         startTime: new Date().toISOString()
