@@ -27,12 +27,16 @@ module.exports = NodeHelper.create({
         try {
             console.log(this.name + ": Fetching NRL data from API...");
             
-            // Using the correct NRL API endpoint
-            const API_URL = "https://www.nrl.com/draw/data";
+            // Using the correct NRL API endpoint for the current season
+            const SEASON = new Date().getFullYear();
+            const API_URL = `https://www.nrl.com/draw/nrl/${SEASON}/fixture?competition=111&season=${SEASON}`;
+            
             const response = await fetch(API_URL, {
                 headers: {
                     'Accept': 'application/json',
-                    'User-Agent': 'Mozilla/5.0 (compatible; MagicMirror/1.0; +https://magicmirror.builders)'
+                    'User-Agent': 'Mozilla/5.0 (compatible; MagicMirror/1.0; +https://magicmirror.builders)',
+                    'Referer': 'https://www.nrl.com/draw/',
+                    'Origin': 'https://www.nrl.com'
                 }
             });
 
@@ -57,7 +61,7 @@ module.exports = NodeHelper.create({
                                 console.log(this.name + ": Team data is missing");
                                 return 'Unknown Team';
                             }
-                            const name = team.shortName || team.name || team.nickName || 'Unknown Team';
+                            const name = team.nickname || team.name || 'Unknown Team';
                             console.log(this.name + ": Resolved team name:", name);
                             return name;
                         };
@@ -81,20 +85,20 @@ module.exports = NodeHelper.create({
                         const matchData = {
                             homeTeam: {
                                 name: getTeamName(match.homeTeam),
-                                score: match.homeTeam?.score || 0,
-                                position: match.homeTeam?.position || null,
+                                score: match.homeTeamScore || 0,
+                                position: match.homeTeamLadderPosition || null,
                                 logo: getTeamLogo(match.homeTeam)
                             },
                             awayTeam: {
                                 name: getTeamName(match.awayTeam),
-                                score: match.awayTeam?.score || 0,
-                                position: match.awayTeam?.position || null,
+                                score: match.awayTeamScore || 0,
+                                position: match.awayTeamLadderPosition || null,
                                 logo: getTeamLogo(match.awayTeam)
                             },
                             status: this.getMatchStatus(match.status),
-                            startTime: match.kickOffTime || new Date().toISOString(),
-                            round: match.roundNumber || 'Unknown Round',
-                            venue: match.venue?.name || 'TBA'
+                            startTime: match.kickOffTimeLong || match.kickOffTime || new Date().toISOString(),
+                            round: `Round ${match.roundNumber || '?'}`,
+                            venue: match.venue?.name || match.venueName || 'TBA'
                         };
 
                         console.log(this.name + ": Successfully processed match:", JSON.stringify(matchData, null, 2));
@@ -105,11 +109,63 @@ module.exports = NodeHelper.create({
                         return null;
                     }
                 }).filter(match => match !== null); // Remove any matches that failed to process
+            } else if (data && Array.isArray(data.draws)) {
+                // Alternative API structure
+                console.log(this.name + ": Processing " + data.draws.length + " draws");
+                matches = data.draws.flatMap(draw => 
+                    (draw.matches || []).map(match => {
+                        try {
+                            return {
+                                homeTeam: {
+                                    name: match.homeTeam?.name || 'Unknown Team',
+                                    score: match.homeScore || 0,
+                                    position: null,
+                                    logo: `modules/MMM-NRL/logos/${(match.homeTeam?.name || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '')}.svg`
+                                },
+                                awayTeam: {
+                                    name: match.awayTeam?.name || 'Unknown Team',
+                                    score: match.awayScore || 0,
+                                    position: null,
+                                    logo: `modules/MMM-NRL/logos/${(match.awayTeam?.name || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '')}.svg`
+                                },
+                                status: this.getMatchStatus(match.status),
+                                startTime: match.kickoffTime || new Date().toISOString(),
+                                round: draw.roundTitle || 'Unknown Round',
+                                venue: match.venue || 'TBA'
+                            };
+                        } catch (err) {
+                            console.error(this.name + ": Error processing match from draw:", err);
+                            return null;
+                        }
+                    }).filter(m => m !== null)
+                );
             } else {
-                console.log(this.name + ": No fixtures found in API response");
+                console.log(this.name + ": No fixtures or draws found in API response");
                 if (data) {
                     console.log(this.name + ": Available data keys:", Object.keys(data));
                 }
+            }
+
+            if (matches.length === 0 && process.env.NODE_ENV === 'development') {
+                console.log(this.name + ": No matches found, using mock data in development mode");
+                matches = [{
+                    homeTeam: {
+                        name: "Broncos",
+                        score: 24,
+                        position: 4,
+                        logo: "modules/MMM-NRL/logos/broncos.svg"
+                    },
+                    awayTeam: {
+                        name: "Storm",
+                        score: 18,
+                        position: 2,
+                        logo: "modules/MMM-NRL/logos/storm.svg"
+                    },
+                    status: "COMPLETED",
+                    startTime: new Date().toISOString(),
+                    round: "Round 1",
+                    venue: "Suncorp Stadium"
+                }];
             }
 
             console.log(this.name + ": Total matches received:", matches.length);
