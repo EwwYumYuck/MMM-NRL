@@ -1,5 +1,3 @@
-var Module = require("node_helper");
-
 Module.register("MMM-NRL", {
     // Override default module config
     defaults: {
@@ -99,63 +97,55 @@ Module.register("MMM-NRL", {
             // Home team cell
             const homeCell = document.createElement("td");
             homeCell.className = "align-right team-cell";
+            
+            // Add home team logo if enabled
             if (this.config.showTeamLogos && match.homeTeam.logo) {
                 const homeLogo = document.createElement("img");
                 homeLogo.src = match.homeTeam.logo;
                 homeLogo.className = "team-logo";
                 homeCell.appendChild(homeLogo);
             }
+
+            // Add home team name
             const homeText = document.createElement("span");
             homeText.innerHTML = match.homeTeam.name;
+            if (this.config.showTablePosition) {
+                homeText.innerHTML += ` (${match.homeTeam.position})`;
+            }
             homeCell.appendChild(homeText);
+            row.appendChild(homeCell);
 
             // Score cell
             const scoreCell = document.createElement("td");
             scoreCell.className = "align-center score-cell";
-            if (this.config.showScores) {
-                if (match.status === "COMPLETED") {
-                    scoreCell.innerHTML = `${match.homeTeam.score} - ${match.awayTeam.score}`;
-                    scoreCell.className += " completed";
-                } else if (match.status === "IN_PROGRESS") {
-                    scoreCell.innerHTML = `${match.homeTeam.score} - ${match.awayTeam.score}`;
-                    scoreCell.className += " live";
-                } else {
-                    const matchTime = moment(match.startTime).format("HH:mm");
-                    scoreCell.innerHTML = matchTime;
-                    scoreCell.className += " upcoming";
-                }
+            if (this.config.showScores && match.status !== "SCHEDULED") {
+                scoreCell.innerHTML = `${match.homeTeam.score} - ${match.awayTeam.score}`;
             } else {
-                scoreCell.innerHTML = "vs";
+                const matchTime = moment(match.startTime).format("HH:mm");
+                scoreCell.innerHTML = matchTime;
             }
+            row.appendChild(scoreCell);
 
             // Away team cell
             const awayCell = document.createElement("td");
             awayCell.className = "align-left team-cell";
+            
+            // Add away team name
             const awayText = document.createElement("span");
             awayText.innerHTML = match.awayTeam.name;
+            if (this.config.showTablePosition) {
+                awayText.innerHTML += ` (${match.awayTeam.position})`;
+            }
             awayCell.appendChild(awayText);
+
+            // Add away team logo if enabled
             if (this.config.showTeamLogos && match.awayTeam.logo) {
                 const awayLogo = document.createElement("img");
                 awayLogo.src = match.awayTeam.logo;
                 awayLogo.className = "team-logo";
                 awayCell.appendChild(awayLogo);
             }
-
-            // Add table position if configured
-            if (this.config.showTablePosition) {
-                const homePos = document.createElement("span");
-                homePos.className = "table-position";
-                homePos.innerHTML = `[${match.homeTeam.position || "-"}]`;
-                homeCell.appendChild(homePos);
-
-                const awayPos = document.createElement("span");
-                awayPos.className = "table-position";
-                awayPos.innerHTML = `[${match.awayTeam.position || "-"}]`;
-                awayCell.appendChild(awayPos);
-            }
-
-            row.appendChild(homeCell);
-            row.appendChild(scoreCell);
+            
             row.appendChild(awayCell);
             table.appendChild(row);
         });
@@ -164,9 +154,8 @@ Module.register("MMM-NRL", {
     },
 
     scheduleUpdate: function() {
-        Log.info(this.name + ": Scheduling updates every " + this.config.updateInterval + "ms");
         const self = this;
-        setInterval(() => {
+        setInterval(function() {
             self.updateData();
         }, this.config.updateInterval);
     },
