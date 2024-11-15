@@ -36,8 +36,8 @@ Add the following configuration to your `config/config.js` file:
         showScores: true,
         showTablePosition: true,
         colored: true,
-        focus_on: [], // Array of team IDs to focus on specific teams
-        mode: "live" // Possible values: "live", "upcoming", "completed"
+        focus_on: [], // Array of team names to focus on specific teams
+        mode: "all" // Possible values: "all", "live", "upcoming", "completed"
     }
 }
 ```
@@ -53,8 +53,41 @@ Add the following configuration to your `config/config.js` file:
 | showScores      | Whether to show match scores. Default is true                                                  |
 | showTablePosition| Whether to show team positions in the league table. Default is true                           |
 | colored         | Whether to show colored text. Default is true                                                  |
-| focus_on        | Array of team IDs to focus on. Empty array shows all teams                                    |
-| mode            | Display mode: "live", "upcoming", or "completed". Default is "live"                            |
+| focus_on        | Array of team names to focus on. Empty array shows all teams                                  |
+| mode            | Display mode: "all", "live", "upcoming", or "completed". Default is "all"                      |
+
+### Display Modes
+
+- **all**: Shows all matches regardless of their status (default)
+- **live**: Shows only matches currently in progress
+- **upcoming**: Shows only scheduled matches that haven't started
+- **completed**: Shows only finished matches
+
+### Team Names for focus_on
+
+You can focus on specific teams by adding their names to the `focus_on` array. For example:
+```javascript
+focus_on: ["Broncos", "Storm", "Raiders"]
+```
+
+Available team names:
+- Broncos
+- Bulldogs
+- Cowboys
+- Dragons
+- Eels
+- Knights
+- Panthers
+- Rabbitohs
+- Raiders
+- Roosters
+- Sea Eagles
+- Sharks
+- Storm
+- Tigers
+- Titans
+- Warriors
+- Dolphins
 
 ## Screenshots
 

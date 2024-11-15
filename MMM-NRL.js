@@ -9,7 +9,7 @@ Module.register("MMM-NRL", {
         showTablePosition: true,
         colored: true,
         focus_on: [], // Array of team IDs to focus on
-        mode: "live" // Possible values: "live", "upcoming", "completed"
+        mode: "all" // Possible values: "all", "live", "upcoming", "completed"
     },
 
     // Define required scripts
@@ -32,9 +32,14 @@ Module.register("MMM-NRL", {
         this.errorMessage = null;
 
         // Validate configuration
-        if (["live", "upcoming", "completed"].indexOf(this.config.mode) === -1) {
-            Log.error(this.name + ": Invalid mode specified. Defaulting to 'live'");
-            this.config.mode = "live";
+        if (["all", "live", "upcoming", "completed"].indexOf(this.config.mode) === -1) {
+            Log.error(this.name + ": Invalid mode specified. Defaulting to 'all'");
+            this.config.mode = "all";
+        }
+
+        if (this.config.focus_on && !Array.isArray(this.config.focus_on)) {
+            Log.error(this.name + ": focus_on must be an array. Defaulting to empty array.");
+            this.config.focus_on = [];
         }
 
         Log.info(this.name + ": Configuration loaded:", JSON.stringify(this.config));
@@ -99,60 +104,79 @@ Module.register("MMM-NRL", {
             homeCell.className = "align-right team-cell";
             
             // Add home team logo if enabled
-            if (this.config.showTeamLogos && match.homeTeam.logo) {
+            if (this.config.showTeamLogos) {
                 const homeLogo = document.createElement("img");
                 homeLogo.src = match.homeTeam.logo;
                 homeLogo.className = "team-logo";
+                homeLogo.alt = match.homeTeam.name;
                 homeCell.appendChild(homeLogo);
             }
 
             // Add home team name
-            const homeText = document.createElement("span");
-            homeText.innerHTML = match.homeTeam.name;
-            if (this.config.showTablePosition) {
-                homeText.innerHTML += ` (${match.homeTeam.position})`;
+            homeCell.innerHTML += match.homeTeam.name;
+
+            // Add table position if enabled
+            if (this.config.showTablePosition && match.homeTeam.position) {
+                const homePos = document.createElement("span");
+                homePos.className = "table-position";
+                homePos.innerHTML = `[${match.homeTeam.position}]`;
+                homeCell.appendChild(homePos);
             }
-            homeCell.appendChild(homeText);
-            row.appendChild(homeCell);
 
             // Score cell
             const scoreCell = document.createElement("td");
-            scoreCell.className = "align-center score-cell";
-            if (this.config.showScores && match.status !== "SCHEDULED") {
-                scoreCell.innerHTML = `${match.homeTeam.score} - ${match.awayTeam.score}`;
-            } else {
-                const matchTime = moment(match.startTime).format("HH:mm");
-                scoreCell.innerHTML = matchTime;
+            scoreCell.className = "score-cell " + match.status.toLowerCase();
+            
+            if (this.config.showScores) {
+                const scoreText = match.status === "SCHEDULED" 
+                    ? moment(match.startTime).format("HH:mm")
+                    : `${match.homeTeam.score} - ${match.awayTeam.score}`;
+                scoreCell.innerHTML = scoreText;
             }
-            row.appendChild(scoreCell);
 
             // Away team cell
             const awayCell = document.createElement("td");
             awayCell.className = "align-left team-cell";
-            
+
             // Add away team name
-            const awayText = document.createElement("span");
-            awayText.innerHTML = match.awayTeam.name;
-            if (this.config.showTablePosition) {
-                awayText.innerHTML += ` (${match.awayTeam.position})`;
+            awayCell.innerHTML = match.awayTeam.name;
+
+            // Add table position if enabled
+            if (this.config.showTablePosition && match.awayTeam.position) {
+                const awayPos = document.createElement("span");
+                awayPos.className = "table-position";
+                awayPos.innerHTML = `[${match.awayTeam.position}]`;
+                awayCell.appendChild(awayPos);
             }
-            awayCell.appendChild(awayText);
 
             // Add away team logo if enabled
-            if (this.config.showTeamLogos && match.awayTeam.logo) {
+            if (this.config.showTeamLogos) {
                 const awayLogo = document.createElement("img");
                 awayLogo.src = match.awayTeam.logo;
                 awayLogo.className = "team-logo";
+                awayLogo.alt = match.awayTeam.name;
                 awayCell.appendChild(awayLogo);
             }
-            
+
+            // Add round and venue info
+            const infoCell = document.createElement("td");
+            infoCell.className = "dimmed small";
+            infoCell.innerHTML = `R${match.round} - ${match.venue}`;
+
+            // Append all cells to row
+            row.appendChild(homeCell);
+            row.appendChild(scoreCell);
             row.appendChild(awayCell);
+            row.appendChild(infoCell);
+
+            // Append row to table
             table.appendChild(row);
         });
 
         return table;
     },
 
+    // Schedule next update
     scheduleUpdate: function() {
         const self = this;
         setInterval(function() {
@@ -160,24 +184,20 @@ Module.register("MMM-NRL", {
         }, this.config.updateInterval);
     },
 
+    // Request new data from the node helper
     updateData: function() {
-        Log.info(this.name + ": Requesting data update");
         this.sendSocketNotification("GET_NRL_DATA", this.config);
     },
 
+    // Handle notifications from node helper
     socketNotificationReceived: function(notification, payload) {
-        Log.info(this.name + ": Received socket notification:", notification);
-        
         if (notification === "NRL_DATA") {
-            Log.info(this.name + ": Processing NRL data update");
             this.loaded = true;
             this.matches = payload.matches;
             this.errorMessage = null;
-            Log.info(this.name + ": Received " + this.matches.length + " matches");
             this.updateDom(this.config.animationSpeed);
-        } else if (notification === "NRL_ERROR") {
-            Log.error(this.name + ": Error loading NRL data:", payload.error);
-            this.errorMessage = "Error loading NRL data: " + payload.error;
+        } else if (notification === "NRL_DATA_ERROR") {
+            this.errorMessage = payload.error;
             this.updateDom(this.config.animationSpeed);
         }
     }
