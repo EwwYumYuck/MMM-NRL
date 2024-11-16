@@ -1,50 +1,93 @@
+/* Magic Mirror
+ * Module: MMM-NRL
+ *
+ * By EwwYumYuck
+ * MIT Licensed.
+ */
+
 Module.register("MMM-NRL", {
     defaults: {
-        updateInterval: 300000, // 5 minutes
+        updateInterval: 5 * 60 * 1000, // 5 minutes
+        updateIntervalLive: 60 * 1000, // 1 minute for live games
         animationSpeed: 1000,
-        maximumEntries: 10,
-        showTeamLogos: true,
-        showScores: true,
-        showTablePosition: true,
         colored: true,
-        focus_on: [],
-        mode: "all",
-        showFooter: true,
-        timeFormat: "dd, HH:mm",
-        showSeasonProgress: true  // New option to show season progress
+        showLogos: true,
+        showScores: true,
+        showTime: true,
+        showVenue: true,
+        maximumEntries: 10,
+        focus_on: false, // Team to focus on
+        mode: "all" // all, live, upcoming, completed
     },
 
-    getScripts: function() {
-        return ["moment.js"];
+    start: function() {
+        Log.info("Starting module: " + this.name);
+        this.loaded = false;
+        this.matches = [];
+        this.error = null;
+        
+        this.sendSocketNotification("SET_CONFIG", this.config);
     },
 
     getStyles: function() {
         return ["MMM-NRL.css", "font-awesome.css"];
     },
 
-    start: function() {
-        Log.info("Starting module: " + this.name);
-        this.loaded = false;
-        this.error = false;
-        this.matches = [];
-
-        this.sendSocketNotification("GET_NRL_DATA", this.config);
-        this.scheduleUpdate();
+    getHeader: function() {
+        if (this.error) {
+            return "MMM-NRL - Error";
+        }
+        if (!this.loaded) {
+            return "MMM-NRL - Loading...";
+        }
+        return "NRL Matches";
     },
 
-    isFinalsMatch: function(roundNumber) {
-        if (!roundNumber) return false;
-        const roundStr = roundNumber.toString().toLowerCase();
-        return roundStr.includes("final") || 
-               roundStr.includes("qualifying") || 
-               roundStr.includes("elimination") || 
-               roundStr.includes("preliminary") || 
-               roundStr === "gf";
+    socketNotificationReceived: function(notification, payload) {
+        if (notification === "DATA") {
+            this.loaded = true;
+            this.matches = this.filterMatches(payload.matches);
+            this.error = null;
+            this.updateDom(this.config.animationSpeed);
+        } else if (notification === "ERROR") {
+            this.error = payload;
+            this.updateDom(this.config.animationSpeed);
+        }
+    },
+
+    filterMatches: function(matches) {
+        let filteredMatches = matches;
+
+        // Filter by mode
+        if (this.config.mode === "live") {
+            filteredMatches = matches.filter(m => m.status === "LIVE");
+        } else if (this.config.mode === "upcoming") {
+            filteredMatches = matches.filter(m => m.status === "UPCOMING");
+        } else if (this.config.mode === "completed") {
+            filteredMatches = matches.filter(m => m.status === "FINISHED");
+        }
+
+        // Filter by team if focus_on is set
+        if (this.config.focus_on) {
+            filteredMatches = filteredMatches.filter(m => 
+                m.home.name.toLowerCase() === this.config.focus_on.toLowerCase() || 
+                m.away.name.toLowerCase() === this.config.focus_on.toLowerCase()
+            );
+        }
+
+        // Limit number of matches
+        return filteredMatches.slice(0, this.config.maximumEntries);
     },
 
     getDom: function() {
         const wrapper = document.createElement("div");
         wrapper.className = "MMM-NRL";
+
+        if (this.error) {
+            wrapper.innerHTML = `Error: ${this.error}`;
+            wrapper.className = "dimmed light small";
+            return wrapper;
+        }
 
         if (!this.loaded) {
             wrapper.innerHTML = "Loading...";
@@ -52,238 +95,71 @@ Module.register("MMM-NRL", {
             return wrapper;
         }
 
-        if (!this.matches || this.matches.length === 0) {
-            wrapper.innerHTML = "No matches available";
-            wrapper.className = "dimmed light small";
-            return wrapper;
-        }
+        const matchesTable = document.createElement("table");
+        matchesTable.className = "small";
 
-        const container = document.createElement("div");
-        container.className = "container";
-
-        // Add season progress bar if enabled and we have a match
-        if (this.config.showSeasonProgress && this.matches[0]) {
-            const seasonProgress = document.createElement("div");
-            seasonProgress.className = "season-progress";
-            
-            // Determine season state from first match
-            const isOffSeason = this.matches[0].homeTeam === "OFF SEASON";
-            const isFinals = this.matches[0].roundNumber === "GF" || 
-                           (typeof this.matches[0].roundNumber === 'string' && 
-                            this.matches[0].roundNumber.includes("Finals"));
-
-            const progressBar = document.createElement("div");
-            progressBar.className = "progress-bar";
-
-            const progressText = document.createElement("div");
-            progressText.className = "progress-text";
-
-            if (isOffSeason) {
-                const nextYear = new Date().getFullYear() + 1;
-                progressText.innerHTML = `NRL ${nextYear} Season starts in March`;
-                progressBar.style.width = "0%";
-                progressBar.classList.add("off-season");
-            } else if (isFinals) {
-                progressText.innerHTML = "NRL Finals Series";
-                progressBar.style.width = "100%";
-                progressBar.classList.add("finals");
-            } else {
-                // Regular season - calculate progress (27 rounds)
-                const currentRound = parseInt(this.matches[0].roundNumber) || 0;
-                const progress = Math.min((currentRound / 27) * 100, 100);
-                progressText.innerHTML = `Round ${currentRound}/27`;
-                progressBar.style.width = progress + "%";
-                progressBar.classList.add("in-season");
-            }
-
-            const progressBarContainer = document.createElement("div");
-            progressBarContainer.className = "progress-bar-container";
-            progressBarContainer.appendChild(progressBar);
-
-            seasonProgress.appendChild(progressText);
-            seasonProgress.appendChild(progressBarContainer);
-            container.appendChild(seasonProgress);
-        }
-
-        const table = document.createElement("table");
-        table.className = "table";
-
-        // Create header row
-        const headerRow = document.createElement("tr");
-        headerRow.className = "tableHeader";
-
-        const timeHeader = document.createElement("th");
-        timeHeader.className = "dateHeader date";
-        timeHeader.innerHTML = "TIME";
-
-        const homeHeader = document.createElement("th");
-        homeHeader.className = "firstTeamHeader";
-        homeHeader.innerHTML = "HOME";
-        homeHeader.setAttribute("colspan", "3");
-
-        const vsHeader = document.createElement("th");
-        vsHeader.className = "vsHeader";
-        vsHeader.innerHTML = " ";
-
-        const awayHeader = document.createElement("th");
-        awayHeader.className = "secondTeamHeader";
-        awayHeader.innerHTML = "AWAY";
-        awayHeader.setAttribute("colspan", "3");
-
-        headerRow.appendChild(timeHeader);
-        headerRow.appendChild(homeHeader);
-        headerRow.appendChild(vsHeader);
-        headerRow.appendChild(awayHeader);
-        table.appendChild(headerRow);
-
-        // Create match rows
-        this.matches.forEach((match, index) => {
-            const row = document.createElement("tr");
-            row.className = match.status.toLowerCase();
-
-            // Add finals indicator if it's a finals match
-            if (this.isFinalsMatch(match.roundNumber)) {
-                row.classList.add("finals-match");
-                
-                // Add finals round header if it's the first match of its round
-                if (index === 0 || match.roundNumber !== this.matches[index-1].roundNumber) {
-                    const finalsHeader = document.createElement("tr");
-                    finalsHeader.className = "finals-header";
-                    const headerCell = document.createElement("td");
-                    headerCell.colSpan = 8;
-                    headerCell.textContent = match.roundNumber;
-                    finalsHeader.appendChild(headerCell);
-                    table.appendChild(finalsHeader);
-                }
-            }
-
-            // Time/Status column
-            const timeCell = document.createElement("td");
-            timeCell.className = "date " + match.status.toLowerCase();
-            
-            // Enhanced status display
-            if (match.status === "LIVE") {
-                timeCell.innerHTML = "LIVE";
-                timeCell.classList.add("bright", "blink");
-            } else if (match.status === "COMPLETED") {
-                timeCell.innerHTML = "FT";
-                timeCell.classList.add("dimmed");
-            } else if (match.homeTeam === "OFF SEASON") {
-                timeCell.innerHTML = "OFF SEASON";
-                timeCell.classList.add("off-season");
-            } else if (match.roundNumber === "GF") {
-                timeCell.innerHTML = "GRAND FINAL";
-                timeCell.classList.add("finals", "bright");
-            } else {
-                timeCell.innerHTML = match.time;
-            }
-            row.appendChild(timeCell);
-
-            // Home team name with ladder position
-            const homeNameCell = document.createElement("td");
-            homeNameCell.className = "firstTeam firstTeamName name";
-            let homeText = match.homeTeam;
-            if (this.config.showTablePosition && match.homeLadderPosition) {
-                homeText = `[${match.homeLadderPosition}] ${match.homeTeam}`;
-            }
-            homeNameCell.innerHTML = homeText;
-            row.appendChild(homeNameCell);
-
-            // Home team logo
-            const homeLogoCell = document.createElement("td");
-            homeLogoCell.className = "firstTeam firstTeamLogo logo";
-            if (this.config.showTeamLogos && match.homeTeam !== "OFF SEASON" && match.homeTeam !== "TBD") {
-                const homeLogo = document.createElement("img");
-                homeLogo.src = this.file("logos/" + match.homeTeam.toLowerCase().replace(/[^a-z0-9]/g, '') + ".png");
-                homeLogo.className = "team-logo" + (!this.config.colored ? " uncolored" : "");
-                homeLogoCell.appendChild(homeLogo);
-            }
-            row.appendChild(homeLogoCell);
-
-            // Home team score
-            const homeScoreCell = document.createElement("td");
-            homeScoreCell.className = "firstTeam firstTeamScore score";
-            homeScoreCell.innerHTML = match.homeScore !== null ? match.homeScore : "-";
-            row.appendChild(homeScoreCell);
-
-            // VS divider
-            const vsCell = document.createElement("td");
-            vsCell.className = "vs";
-            vsCell.innerHTML = match.status === "LIVE" ? "•" : ":";
-            row.appendChild(vsCell);
-
-            // Away team score
-            const awayScoreCell = document.createElement("td");
-            awayScoreCell.className = "secondTeam secondTeamScore score";
-            awayScoreCell.innerHTML = match.awayScore !== null ? match.awayScore : "-";
-            row.appendChild(awayScoreCell);
-
-            // Away team logo
-            const awayLogoCell = document.createElement("td");
-            awayLogoCell.className = "secondTeam secondTeamLogo logo";
-            if (this.config.showTeamLogos && match.awayTeam !== "2024" && match.awayTeam !== "TBD") {
-                const awayLogo = document.createElement("img");
-                awayLogo.src = this.file("logos/" + match.awayTeam.toLowerCase().replace(/[^a-z0-9]/g, '') + ".png");
-                awayLogo.className = "team-logo" + (!this.config.colored ? " uncolored" : "");
-                awayLogoCell.appendChild(awayLogo);
-            }
-            row.appendChild(awayLogoCell);
-
-            // Away team name with ladder position
-            const awayNameCell = document.createElement("td");
-            awayNameCell.className = "secondTeam secondTeamName name";
-            let awayText = match.awayTeam;
-            if (this.config.showTablePosition && match.awayLadderPosition) {
-                awayText = `${match.awayTeam} [${match.awayLadderPosition}]`;
-            }
-            awayNameCell.innerHTML = awayText;
-            row.appendChild(awayNameCell);
-
-            // Highlight focused teams
-            if (this.config.focus_on && this.config.focus_on.length > 0) {
-                if (this.config.focus_on.includes(match.homeTeam)) {
-                    homeNameCell.classList.add("bright");
-                }
-                if (this.config.focus_on.includes(match.awayTeam)) {
-                    awayNameCell.classList.add("bright");
-                }
-            }
-
-            table.appendChild(row);
+        this.matches.forEach(match => {
+            matchesTable.appendChild(this.createMatchRow(match));
         });
 
-        // Add footer if enabled
-        if (this.config.showFooter) {
-            const footerRow = document.createElement("tr");
-            footerRow.className = "footerRow";
-
-            const footer = document.createElement("td");
-            footer.className = "footer";
-            footer.setAttribute("colspan", "8");
-            footer.innerHTML = "Updated: " + moment().format("dd, DD.MM.YYYY, HH:mm[h]");
-            footerRow.appendChild(footer);
-
-            table.appendChild(footerRow);
-        }
-
-        container.appendChild(table);
-        wrapper.appendChild(container);
-
+        wrapper.appendChild(matchesTable);
         return wrapper;
     },
 
-    scheduleUpdate: function() {
-        const self = this;
-        setInterval(function() {
-            self.sendSocketNotification("GET_NRL_DATA", self.config);
-        }, this.config.updateInterval);
-    },
+    createMatchRow: function(match) {
+        const row = document.createElement("tr");
+        row.className = "title bright";
 
-    socketNotificationReceived: function(notification, payload) {
-        if (notification === "NRL_MATCHES") {
-            this.matches = payload;
-            this.loaded = true;
-            this.updateDom(this.config.animationSpeed);
+        // Home Team
+        const homeCell = document.createElement("td");
+        homeCell.className = "align-right";
+        if (this.config.showLogos) {
+            const homeLogo = document.createElement("img");
+            homeLogo.src = match.home.logo;
+            homeLogo.className = this.config.colored ? "team-logo" : "team-logo grayscale";
+            homeCell.appendChild(homeLogo);
         }
+        homeCell.innerHTML += ` ${match.home.name}`;
+        row.appendChild(homeCell);
+
+        // Score
+        const scoreCell = document.createElement("td");
+        scoreCell.className = "align-center";
+        if (this.config.showScores && (match.status === "LIVE" || match.status === "FINISHED")) {
+            scoreCell.innerHTML = `${match.home.score} - ${match.away.score}`;
+        } else {
+            const matchTime = new Date(match.starttime);
+            scoreCell.innerHTML = matchTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        if (match.status === "LIVE") {
+            scoreCell.className += " live";
+        }
+        row.appendChild(scoreCell);
+
+        // Away Team
+        const awayCell = document.createElement("td");
+        awayCell.className = "align-left";
+        awayCell.innerHTML = match.away.name;
+        if (this.config.showLogos) {
+            const awayLogo = document.createElement("img");
+            awayLogo.src = match.away.logo;
+            awayLogo.className = this.config.colored ? "team-logo" : "team-logo grayscale";
+            awayCell.appendChild(awayLogo);
+        }
+        row.appendChild(awayCell);
+
+        // Venue (if enabled)
+        if (this.config.showVenue && match.venue) {
+            const venueRow = document.createElement("tr");
+            venueRow.className = "dimmed small";
+            const venueCell = document.createElement("td");
+            venueCell.colSpan = 3;
+            venueCell.className = "align-center";
+            venueCell.innerHTML = `${match.venue} - ${match.round}`;
+            venueRow.appendChild(venueCell);
+            return document.createDocumentFragment().appendChild(row).appendChild(venueRow).parentNode;
+        }
+
+        return row;
     }
 });

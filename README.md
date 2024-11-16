@@ -27,72 +27,61 @@ Add the following configuration to your `config/config.js` file:
 ```javascript
 {
     module: "MMM-NRL",
-    header: "MMM-NRL",
+    header: "MMM-NRL",  // Optional: Set to null to hide header
     position: "top_right",
     config: {
-        updateInterval: 300000, // Update every 5 minutes
+        updateInterval: 300000,        // 5 minutes for regular updates
+        updateIntervalLive: 60000,     // 1 minute for live games
         animationSpeed: 1000,
-        maximumEntries: 10,
-        showTeamLogos: true,
+        showLogos: true,
         showScores: true,
-        showTablePosition: true,
-        colored: true,
-        focus_on: [], // Array of team names to focus on specific teams
-        mode: "all" // Possible values: "all", "live", "upcoming", "completed"
+        showVenue: true,
+        colored: true,                 // false for grayscale logos
+        maximumEntries: 10,
+        focus_on: false,              // Set to team name to focus on specific team
+        mode: "all"                   // "all", "live", "upcoming", or "completed"
     }
 }
 ```
 
 ### Configuration Options
 
-| Option           | Description                                                                                    |
-|-----------------|------------------------------------------------------------------------------------------------|
-| updateInterval  | How often to fetch new data (in milliseconds). Default is 300000 (5 minutes)                   |
-| animationSpeed  | Speed of the update animation (in milliseconds). Default is 1000                               |
-| maximumEntries  | Maximum number of matches to display. Default is 10                                            |
-| showTeamLogos   | Whether to show team logos. Default is true                                                    |
-| showScores      | Whether to show match scores. Default is true                                                  |
-| showTablePosition| Whether to show team positions in the league table. Default is true                           |
-| colored         | Whether to show colored text. Default is true                                                  |
-| focus_on        | Array of team names to focus on. Empty array shows all teams                                  |
-| mode            | Display mode: "all", "live", "upcoming", or "completed". Default is "all"                      |
+| Option             | Description                                                                                    | Default |
+|--------------------|------------------------------------------------------------------------------------------------|---------|
+| header             | Text to display in the header. Set to null to hide header                                      | "MMM-NRL" |
+| updateInterval     | How often to fetch new data for regular updates (in milliseconds)                              | 300000 (5 minutes) |
+| updateIntervalLive | How often to fetch new data during live games (in milliseconds)                                | 60000 (1 minute) |
+| animationSpeed     | Speed of the update animation (in milliseconds)                                                | 1000 |
+| showLogos         | Whether to show team logos                                                                     | true |
+| showScores        | Whether to show match scores                                                                   | true |
+| showVenue         | Whether to show match venue                                                                    | true |
+| colored           | Whether to show colored logos (false for grayscale)                                            | true |
+| maximumEntries    | Maximum number of matches to display                                                           | 10 |
+| focus_on          | Team name to focus on (e.g., "Storm", "Broncos"). Set to false to show all teams              | false |
+| mode              | Display mode: "all", "live", "upcoming", or "completed"                                        | "all" |
 
-### Display Modes
+## Features
 
-- **all**: Shows all matches regardless of their status (default)
-- **live**: Shows only matches currently in progress
-- **upcoming**: Shows only scheduled matches that haven't started
-- **completed**: Shows only finished matches
-
-### Team Names for focus_on
-
-You can focus on specific teams by adding their names to the `focus_on` array. For example:
-```javascript
-focus_on: ["Broncos", "Storm", "Raiders"]
-```
-
-Available team names:
-- Broncos
-- Bulldogs
-- Cowboys
-- Dragons
-- Eels
-- Knights
-- Panthers
-- Rabbitohs
-- Raiders
-- Roosters
-- Sea Eagles
-- Sharks
-- Storm
-- Tigers
-- Titans
-- Warriors
-- Dolphins
+- Live match scores and updates
+- Team logos (colored or grayscale)
+- Match venues and round information
+- Configurable update intervals (faster updates for live matches)
+- Filter matches by team or status
+- Clean and modern design
 
 ## Screenshots
 
 [Add screenshots here]
+
+## Updating
+
+To update the module to the latest version:
+
+```bash
+cd ~/MagicMirror/modules/MMM-NRL
+git pull
+npm install
+```
 
 ## Contributing
 
@@ -100,4 +89,4 @@ Feel free to submit issues and pull requests!
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the LICENSE file for details.

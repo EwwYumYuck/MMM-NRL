@@ -9,171 +9,6 @@
     width: 100%;
     padding: 0;
     margin: 0 auto;
-    text-align: center;
-}
-
-.MMM-NRL .container {
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.MMM-NRL .season-progress {
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-.MMM-NRL .progress-text {
-    font-size: 14px;
-    margin-bottom: 5px;
-    color: #999;
-}
-
-.MMM-NRL .progress-bar-container {
-    width: 100%;
-    height: 4px;
-    background-color: #333;
-    border-radius: 2px;
-    overflow: hidden;
-}
-
-.MMM-NRL .progress-bar {
-    height: 100%;
-    transition: width 1s ease-in-out;
-}
-
-.MMM-NRL .progress-bar.off-season {
-    background-color: #666;
-}
-
-.MMM-NRL .progress-bar.in-season {
-    background-color: #4CAF50;
-}
-
-.MMM-NRL .progress-bar.finals {
-    background-color: #FFC107;
-}
-
-.MMM-NRL .table {
-    width: 100%;
-    border-spacing: 0;
-    padding: 0;
-    margin: 0;
-}
-
-.MMM-NRL .tableHeader {
-    font-weight: 300;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #666;
-}
-
-.MMM-NRL th {
-    text-align: center;
-    font-size: 14px;
-    padding: 5px;
-    font-weight: normal;
-    color: #999;
-}
-
-.MMM-NRL td {
-    font-size: 14px;
-    padding: 2px 4px;
-    text-align: center;
-}
-
-.MMM-NRL tr {
-    transition: all 0.3s ease;
-}
-
-.MMM-NRL tr.live {
-    background-color: rgba(76, 175, 80, 0.1);
-}
-
-.MMM-NRL tr.completed {
-    opacity: 0.7;
-}
-
-.MMM-NRL .date {
-    text-align: center;
-    min-width: 45px;
-}
-
-.MMM-NRL .live {
-    color: #4CAF50;
-}
-
-.MMM-NRL .completed {
-    color: #666;
-}
-
-.MMM-NRL .scheduled {
-    color: #999;
-}
-
-.MMM-NRL .off-season {
-    color: #FFC107;
-}
-
-.MMM-NRL .finals {
-    color: #FFC107;
-}
-
-.MMM-NRL .name {
-    text-align: center;
-    min-width: 100px;
-    max-width: 150px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.MMM-NRL .firstTeamName {
-    text-align: right;
-}
-
-.MMM-NRL .secondTeamName {
-    text-align: left;
-}
-
-.MMM-NRL .score {
-    min-width: 25px;
-    font-weight: bold;
-}
-
-.MMM-NRL .vs {
-    color: #666;
-    font-weight: bold;
-}
-
-.MMM-NRL .team-logo {
-    height: 25px;
-    width: 25px;
-    vertical-align: middle;
-    margin: 0 5px;
-}
-
-.MMM-NRL .team-logo.uncolored {
-    filter: grayscale(100%) brightness(200%);
-}
-
-.MMM-NRL .bright {
-    color: #fff;
-}
-
-.MMM-NRL .dimmed {
-    color: #666;
-}
-
-@keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-}
-
-.MMM-NRL .blink {
-    animation: blink 2s infinite;
 }
 
 .MMM-NRL table {
@@ -183,45 +18,57 @@
     color: #fff;
 }
 
-.MMM-NRL tr.finals-header {
-    background-color: rgba(255, 215, 0, 0.2);
+.MMM-NRL tr {
+    background: transparent;
+}
+
+.MMM-NRL td {
+    padding: 0 6px;
+    line-height: 1.2;
+}
+
+.MMM-NRL .align-left {
+    text-align: left;
+}
+
+.MMM-NRL .align-center {
     text-align: center;
+}
+
+.MMM-NRL .align-right {
+    text-align: right;
+}
+
+.MMM-NRL .team-logo {
+    height: 25px;
+    width: 25px;
+    vertical-align: middle;
+    margin: 2px;
+}
+
+.MMM-NRL .team-logo.grayscale {
+    filter: grayscale(100%) brightness(120%);
+}
+
+.MMM-NRL .live {
+    color: #ff4444;
     font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 0.9em;
-    color: #FFD700;
 }
 
-.MMM-NRL tr.finals-match {
-    background-color: rgba(255, 215, 0, 0.1);
-}
-
-.MMM-NRL tr.finals-match td {
-    border-left: 2px solid rgba(255, 215, 0, 0.3);
-    padding-left: 5px;
-}
-
-.MMM-NRL tr.finals-match.live {
-    animation: finals-pulse 2s infinite;
-}
-
-@keyframes finals-pulse {
-    0% {
-        background-color: rgba(255, 215, 0, 0.1);
-    }
-    50% {
-        background-color: rgba(255, 215, 0, 0.2);
-    }
-    100% {
-        background-color: rgba(255, 215, 0, 0.1);
-    }
-}
-
-.MMM-NRL .footer {
-    text-align: center;
-    font-size: 12px;
+.MMM-NRL .dimmed {
     color: #666;
-    padding-top: 10px;
-    border-top: 1px solid #333;
+}
+
+.MMM-NRL .small {
+    font-size: 80%;
+}
+
+.MMM-NRL .bright {
+    color: #fff;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0.5;
+    }
 }
