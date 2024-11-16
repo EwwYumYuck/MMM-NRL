@@ -19,242 +19,308 @@ module.exports = NodeHelper.create({
                 this.started = true;
             }
             console.log(this.name + ": Getting NRL data with config:", JSON.stringify(payload));
-            this.getData(payload);
+            this.getMatches(payload);
         }
     },
 
-    getData: async function(config) {
+    async getMatches(config) {
         try {
-            console.log(this.name + ": Fetching NRL data from API...");
+            let data = null;
+            let error = null;
             
             // Get current year and determine seasons to try
             const currentYear = new Date().getFullYear();
             const currentMonth = new Date().getMonth() + 1; // 1-12
-
-            // Define NRL season months
+            
+            // Define NRL season months and finals rounds
             const SEASON_START_MONTH = 3;  // March
-            const SEASON_END_MONTH = 10;   // October
+            const SEASON_END_MONTH = 9;    // September (regular season)
+            const FINALS_START_MONTH = 9;  // September (finals start)
             const FINALS_END_MONTH = 10;   // October
-            const OFF_SEASON_MESSAGE = "NRL " + (currentYear + 1) + " Season starts in March";
-
+            
             // Determine if we're in season, finals, or off-season
             let seasonState = "OFF_SEASON";
-            if (currentMonth >= SEASON_START_MONTH && currentMonth <= SEASON_END_MONTH) {
+            if (currentMonth >= SEASON_START_MONTH && currentMonth < FINALS_START_MONTH) {
                 seasonState = "IN_SEASON";
-            } else if (currentMonth === FINALS_END_MONTH) {
+            } else if ((currentMonth === FINALS_START_MONTH && new Date().getDate() >= 1) || 
+                       (currentMonth === FINALS_END_MONTH && new Date().getDate() <= 15)) {
                 seasonState = "FINALS";
             }
 
             console.log(this.name + `: Current season state: ${seasonState}`);
 
-            // Determine which seasons to try
-            const seasons = [];
-            if (seasonState === "IN_SEASON" || seasonState === "FINALS") {
-                seasons.push(currentYear);
-            } else if (currentMonth >= 11 || currentMonth <= 2) {
-                // During off-season, look for next year's fixtures
-                seasons.push(currentYear + 1);
+            // Calculate the date range for fetching matches
+            const now = new Date();
+            const pastDate = new Date(now);
+            pastDate.setDate(pastDate.getDate() - 14); // Get matches from the last 14 days
+            const futureDate = new Date(now);
+            
+            // If we're in off-season, look further ahead for next season's matches
+            if (seasonState === "OFF_SEASON") {
+                // If we're between November and February, look ahead to March
+                if (currentMonth >= 11 || currentMonth <= 2) {
+                    futureDate.setFullYear(currentYear + 1);
+                    futureDate.setMonth(2); // March
+                    futureDate.setDate(31); // End of March
+                }
+            } else {
+                futureDate.setDate(futureDate.getDate() + 7); // Just next 7 days for regular season
             }
 
-            console.log(this.name + ": Will try seasons in order:", seasons.join(", "));
-            
-            let data = null;
-            let error = null;
-            
-            // Try each season until we get data
-            for (const season of seasons) {
-                try {
-                    const API_URL = `https://nrl.com/api/v2/game/list?offset=0&limit=50&competitionId=111&season=${season}`;
+            // Format dates for API
+            const fromDate = pastDate.toISOString().split('T')[0];
+            const toDate = futureDate.toISOString().split('T')[0];
+
+            try {
+                // Try current season first
+                let apiUrl = `https://nrl.com/draw/data?from=${fromDate}&to=${toDate}&competition=111&season=${currentYear}`;
+                console.log(this.name + `: Fetching matches from ${apiUrl}`);
+
+                let response = await fetch(apiUrl, {
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                    }
+                });
+
+                data = await response.json();
+
+                // If we're in off-season and no data found, try next season
+                if (seasonState === "OFF_SEASON" && (!data || !data.games || data.games.length === 0)) {
+                    apiUrl = `https://nrl.com/draw/data?from=${fromDate}&to=${toDate}&competition=111&season=${currentYear + 1}`;
+                    console.log(this.name + `: Trying next season: ${apiUrl}`);
                     
-                    console.log(this.name + ": Trying API endpoint for season " + season + ":", API_URL);
-                    const response = await fetch(API_URL, {
+                    response = await fetch(apiUrl, {
                         headers: {
-                            'Accept': 'application/json',
-                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
-                            'Referer': 'https://www.nrl.com/draw/',
-                            'Origin': 'https://www.nrl.com'
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
                         }
                     });
 
-                    if (!response.ok) {
-                        error = `HTTP error! status: ${response.status} for season ${season}`;
-                        console.log(this.name + ": " + error);
-                        continue;
+                    if (response.ok) {
+                        const nextSeasonData = await response.json();
+                        if (nextSeasonData && nextSeasonData.games && nextSeasonData.games.length > 0) {
+                            data = nextSeasonData;
+                        }
                     }
-
-                    data = await response.json();
-                    if (data && Array.isArray(data.games) && data.games.length > 0) {
-                        console.log(this.name + `: Successfully fetched data from API for season ${season}`);
-                        break;
-                    } else {
-                        error = `No games found in API response for season ${season}`;
-                        console.log(this.name + ": " + error);
-                    }
-                } catch (err) {
-                    error = `Error fetching season ${season}: ${err.message}`;
-                    console.log(this.name + ": " + error);
                 }
+
+                console.log(this.name + `: Successfully fetched ${data?.games?.length || 0} matches`);
+            } catch (err) {
+                console.error(this.name + ": Error fetching matches:", err);
+                error = err.message;
             }
 
             // If we couldn't get data, use appropriate mock data based on season state
             if (!data || !Array.isArray(data.games) || data.games.length === 0) {
                 console.log(this.name + ": No valid data found, using mock data");
-                console.log(this.name + ": Last error was: " + error);
                 
-                const nextYear = new Date().getFullYear() + 1;
+                // Generate mock data that includes both completed and upcoming matches
+                const games = [];
                 
                 if (seasonState === "OFF_SEASON") {
-                    // Show off-season message with next season's start
-                    const marchFirst = new Date(nextYear, 2, 1, 19, 30); // March 1st, 7:30 PM
-                    data = {
-                        games: [
-                            {
-                                homeTeam: {
-                                    nickName: "OFF SEASON",
-                                    teamName: "Off Season",
-                                    ladderPosition: null
-                                },
-                                awayTeam: {
-                                    nickName: "2024",
-                                    teamName: "2024",
-                                    ladderPosition: null
-                                },
-                                gameState: "Pre Game",
-                                kickOffDate: marchFirst.toISOString(),
-                                roundNumber: 1,
-                                venue: { name: "Season " + nextYear },
-                                scores: {
-                                    home: null,
-                                    away: null
-                                }
+                    // Add some completed matches from previous season
+                    for (let i = 0; i < 2; i++) {
+                        const pastDate = new Date();
+                        pastDate.setDate(pastDate.getDate() - (i + 1));
+                        
+                        games.push({
+                            homeTeam: {
+                                nickName: "Panthers",
+                                teamName: "Penrith Panthers",
+                                ladderPosition: 1
+                            },
+                            awayTeam: {
+                                nickName: "Broncos",
+                                teamName: "Brisbane Broncos",
+                                ladderPosition: 2
+                            },
+                            gameState: "Full Time",
+                            kickOffDate: pastDate.toISOString(),
+                            roundNumber: "Grand Final",
+                            venue: { name: "Accor Stadium" },
+                            scores: {
+                                home: Math.floor(Math.random() * 30) + 10,
+                                away: Math.floor(Math.random() * 30) + 10
                             }
-                        ]
-                    };
-                } else if (seasonState === "FINALS") {
-                    // Show finals series info or upcoming grand final
-                    const grandFinalDate = new Date(currentYear, 9, 1, 19, 30); // October 1st, 7:30 PM
-                    data = {
-                        games: [
-                            {
-                                homeTeam: {
-                                    nickName: "TBD",
-                                    teamName: "To Be Determined",
-                                    ladderPosition: 1
-                                },
-                                awayTeam: {
-                                    nickName: "TBD",
-                                    teamName: "To Be Determined",
-                                    ladderPosition: 2
-                                },
-                                gameState: "Pre Game",
-                                kickOffDate: grandFinalDate.toISOString(),
-                                roundNumber: "GF",
-                                venue: { name: "Accor Stadium" },
-                                scores: {
-                                    home: null,
-                                    away: null
-                                }
+                        });
+                    }
+
+                    // Add upcoming matches for next season
+                    const nextYear = currentYear + 1;
+                    const roundNames = ["Round 1", "Round 1", "Round 2", "Round 2"];
+                    const teams = [
+                        { nick: "Panthers", name: "Penrith Panthers", pos: 1 },
+                        { nick: "Broncos", name: "Brisbane Broncos", pos: 2 },
+                        { nick: "Rabbitohs", name: "South Sydney Rabbitohs", pos: 3 },
+                        { nick: "Roosters", name: "Sydney Roosters", pos: 4 },
+                        { nick: "Storm", name: "Melbourne Storm", pos: 5 },
+                        { nick: "Cowboys", name: "North Queensland Cowboys", pos: 6 },
+                        { nick: "Sharks", name: "Cronulla-Sutherland Sharks", pos: 7 },
+                        { nick: "Raiders", name: "Canberra Raiders", pos: 8 }
+                    ];
+
+                    for (let i = 0; i < 4; i++) {
+                        const futureDate = new Date(nextYear, 2, 1 + Math.floor(i/2) * 7); // March 1st, then March 8th
+                        futureDate.setHours(19 + (i % 2) * 2, 30, 0, 0); // 7:30 PM or 9:30 PM
+
+                        games.push({
+                            homeTeam: {
+                                nickName: teams[i*2].nick,
+                                teamName: teams[i*2].name,
+                                ladderPosition: teams[i*2].pos
+                            },
+                            awayTeam: {
+                                nickName: teams[i*2+1].nick,
+                                teamName: teams[i*2+1].name,
+                                ladderPosition: teams[i*2+1].pos
+                            },
+                            gameState: "Scheduled",
+                            kickOffDate: futureDate.toISOString(),
+                            roundNumber: roundNames[i],
+                            venue: i % 2 === 0 ? "Accor Stadium" : "Suncorp Stadium",
+                            scores: {
+                                home: null,
+                                away: null
                             }
-                        ]
-                    };
+                        });
+                    }
                 } else {
-                    // Regular season - show next round's fixtures
-                    const nextGameDate = new Date();
-                    nextGameDate.setDate(nextGameDate.getDate() + 7);
-                    nextGameDate.setHours(19, 30, 0, 0);
-                    
-                    data = {
-                        games: [
-                            {
-                                homeTeam: {
-                                    nickName: "Panthers",
-                                    teamName: "Penrith Panthers",
-                                    ladderPosition: 1
-                                },
-                                awayTeam: {
-                                    nickName: "Broncos",
-                                    teamName: "Brisbane Broncos",
-                                    ladderPosition: 2
-                                },
-                                gameState: "Pre Game",
-                                kickOffDate: nextGameDate.toISOString(),
-                                roundNumber: "Next Round",
-                                venue: { name: "BlueBet Stadium" },
-                                scores: {
-                                    home: null,
-                                    away: null
-                                }
+                    // Add completed matches (including finals if relevant)
+                    for (let i = 0; i < 3; i++) {
+                        const pastDate = new Date();
+                        pastDate.setDate(pastDate.getDate() - (i + 1));
+                        
+                        let roundInfo = {
+                            number: seasonState === "FINALS" ? "Qualifying Final" : `Round ${Math.floor(Math.random() * 5) + 20}`,
+                            venue: "Accor Stadium"
+                        };
+                        
+                        if (seasonState === "FINALS") {
+                            roundInfo = {
+                                number: ["Qualifying Final", "Semi Final", "Preliminary Final"][i] || "Qualifying Final",
+                                venue: i % 2 === 0 ? "Accor Stadium" : "Suncorp Stadium"
+                            };
+                        }
+                        
+                        games.push({
+                            homeTeam: {
+                                nickName: "Panthers",
+                                teamName: "Penrith Panthers",
+                                ladderPosition: 1
+                            },
+                            awayTeam: {
+                                nickName: "Broncos",
+                                teamName: "Brisbane Broncos",
+                                ladderPosition: 2
+                            },
+                            gameState: "Full Time",
+                            kickOffDate: pastDate.toISOString(),
+                            roundNumber: roundInfo.number,
+                            venue: { name: roundInfo.venue },
+                            scores: {
+                                home: Math.floor(Math.random() * 30) + 10,
+                                away: Math.floor(Math.random() * 30) + 10
                             }
-                        ]
-                    };
+                        });
+                    }
+                    
+                    // Add upcoming matches
+                    for (let i = 0; i < 2; i++) {
+                        const futureDate = new Date();
+                        futureDate.setDate(futureDate.getDate() + (i + 1));
+                        
+                        let roundInfo = {
+                            number: seasonState === "FINALS" ? "Grand Final" : `Round ${Math.floor(Math.random() * 5) + 20}`,
+                            venue: "Accor Stadium"
+                        };
+                        
+                        if (seasonState === "FINALS") {
+                            roundInfo = {
+                                number: i === 0 ? "Preliminary Final" : "Grand Final",
+                                venue: "Accor Stadium"
+                            };
+                        }
+                        
+                        games.push({
+                            homeTeam: {
+                                nickName: "Rabbitohs",
+                                teamName: "South Sydney Rabbitohs",
+                                ladderPosition: 3
+                            },
+                            awayTeam: {
+                                nickName: "Roosters",
+                                teamName: "Sydney Roosters",
+                                ladderPosition: 4
+                            },
+                            gameState: "Scheduled",
+                            kickOffDate: futureDate.toISOString(),
+                            roundNumber: roundInfo.number,
+                            venue: { name: roundInfo.venue },
+                            scores: {
+                                home: null,
+                                away: null
+                            }
+                        });
+                    }
                 }
+                
+                data = { games: games };
             }
 
             // Transform API data to our format
             let matches = [];
             if (data && Array.isArray(data.games)) {
-                console.log(this.name + ": Processing " + data.games.length + " games");
-                matches = data.games.map(game => {
-                    try {
-                        console.log(this.name + ": Processing game data:", JSON.stringify({
-                            homeTeam: game.homeTeam?.nickName || game.homeTeam?.teamName,
-                            awayTeam: game.awayTeam?.nickName || game.awayTeam?.teamName,
-                            gameState: game.gameState,
-                            kickOffDate: game.kickOffDate,
-                            roundNumber: game.roundNumber,
-                            venue: game.venue?.name
-                        }, null, 2));
-                        
-                        const getTeamName = (team) => {
-                            if (!team) {
-                                console.log(this.name + ": Warning - Missing team data");
-                                return 'Unknown Team';
-                            }
-                            const name = team.nickName || team.teamName || 'Unknown Team';
-                            console.log(this.name + ": Resolved team name:", name);
-                            return name;
-                        };
+                data.games.forEach(game => {
+                    const match = {
+                        homeTeam: getTeamName(game.homeTeam),
+                        awayTeam: getTeamName(game.awayTeam),
+                        homeLadderPosition: game.homeTeam ? game.homeTeam.ladderPosition : null,
+                        awayLadderPosition: game.awayTeam ? game.awayTeam.ladderPosition : null,
+                        homeScore: game.scores ? game.scores.home : null,
+                        awayScore: game.scores ? game.scores.away : null,
+                        status: this.getMatchStatus(game.gameState),
+                        time: new Date(game.kickOffDate),
+                        venue: game.venue ? game.venue.name : "TBD",
+                        roundNumber: game.roundNumber,
+                        season: new Date(game.kickOffDate).getFullYear()
+                    };
 
-                        const kickOffDate = new Date(game.kickOffDate);
-                        const now = new Date();
-                        const status = this.getMatchStatus(game.gameState);
-                        const isUpcoming = status === 'SCHEDULED' && kickOffDate > now;
-                        const isLive = status === 'LIVE';
-                        const showScore = !isUpcoming || config.showScores;
-
-                        console.log(this.name + ": Match details:", {
-                            status,
-                            isUpcoming,
-                            isLive,
-                            showScore,
-                            kickOffTime: this.formatKickoffTime(kickOffDate)
-                        });
-
-                        return {
-                            homeTeam: getTeamName(game.homeTeam),
-                            awayTeam: getTeamName(game.awayTeam),
-                            homeScore: showScore ? (game.scores?.home || 0) : null,
-                            awayScore: showScore ? (game.scores?.away || 0) : null,
-                            status: status,
-                            time: isUpcoming ? 
-                                this.formatKickoffTime(kickOffDate) : 
-                                (isLive ? 'LIVE' : this.formatGameTime(kickOffDate)),
-                            round: 'Round ' + game.roundNumber,
-                            venue: game.venue?.name || 'TBA'
-                        };
-                    } catch (err) {
-                        console.error(this.name + ": Error processing game data:", err);
-                        return null;
+                    // Format the time based on match status
+                    if (match.status === "SCHEDULED") {
+                        match.time = this.formatKickoffTime(match.time);
+                    } else if (match.status === "COMPLETED") {
+                        match.time = "FT";
                     }
-                }).filter(match => match !== null);
 
-                // Sort matches: Live first, then upcoming, then completed
+                    matches.push(match);
+                });
+
+                // Sort matches: Completed finals first, then live matches, then upcoming matches
                 matches.sort((a, b) => {
-                    const statusOrder = { 'LIVE': 0, 'SCHEDULED': 1, 'COMPLETED': 2 };
+                    const statusOrder = { 'COMPLETED': 0, 'LIVE': 1, 'SCHEDULED': 2 };
+                    const aIsFinals = this.isFinalsMatch(a.roundNumber);
+                    const bIsFinals = this.isFinalsMatch(b.roundNumber);
+                    
+                    // If we're in off-season, prioritize next season's matches
+                    if (seasonState === "OFF_SEASON") {
+                        if (a.season !== b.season) {
+                            return b.season - a.season; // Show next season's matches first
+                        }
+                    }
+                    
+                    // Finals matches take precedence within same season
+                    if (aIsFinals !== bIsFinals) {
+                        return aIsFinals ? -1 : 1;
+                    }
+                    
+                    // Then sort by status
                     if (statusOrder[a.status] !== statusOrder[b.status]) {
                         return statusOrder[a.status] - statusOrder[b.status];
                     }
-                    // For same status, sort by time
+                    
+                    // For same status, sort by time (most recent first for completed matches)
+                    if (a.status === 'COMPLETED') {
+                        return new Date(b.time) - new Date(a.time);
+                    }
                     return new Date(a.time) - new Date(b.time);
                 });
             }
@@ -350,5 +416,20 @@ module.exports = NodeHelper.create({
         const mappedStatus = statusMap[apiStatus] || 'SCHEDULED';
         console.log(this.name + `: Mapping status '${apiStatus}' to '${mappedStatus}'`);
         return mappedStatus;
+    },
+
+    isFinalsMatch: function(roundNumber) {
+        const finalsRounds = ["Qualifying Final", "Semi Final", "Preliminary Final", "Grand Final"];
+        return finalsRounds.includes(roundNumber);
     }
 });
+
+function getTeamName(team) {
+    if (!team) {
+        console.log(this.name + ": Warning - Missing team data");
+        return 'Unknown Team';
+    }
+    const name = team.nickName || team.teamName || 'Unknown Team';
+    console.log(this.name + ": Resolved team name:", name);
+    return name;
+}

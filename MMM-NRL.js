@@ -32,6 +32,16 @@ Module.register("MMM-NRL", {
         this.scheduleUpdate();
     },
 
+    isFinalsMatch: function(roundNumber) {
+        if (!roundNumber) return false;
+        const roundStr = roundNumber.toString().toLowerCase();
+        return roundStr.includes("final") || 
+               roundStr.includes("qualifying") || 
+               roundStr.includes("elimination") || 
+               roundStr.includes("preliminary") || 
+               roundStr === "gf";
+    },
+
     getDom: function() {
         const wrapper = document.createElement("div");
         wrapper.className = "MMM-NRL";
@@ -127,9 +137,25 @@ Module.register("MMM-NRL", {
         table.appendChild(headerRow);
 
         // Create match rows
-        this.matches.forEach((match) => {
+        this.matches.forEach((match, index) => {
             const row = document.createElement("tr");
             row.className = match.status.toLowerCase();
+
+            // Add finals indicator if it's a finals match
+            if (this.isFinalsMatch(match.roundNumber)) {
+                row.classList.add("finals-match");
+                
+                // Add finals round header if it's the first match of its round
+                if (index === 0 || match.roundNumber !== this.matches[index-1].roundNumber) {
+                    const finalsHeader = document.createElement("tr");
+                    finalsHeader.className = "finals-header";
+                    const headerCell = document.createElement("td");
+                    headerCell.colSpan = 8;
+                    headerCell.textContent = match.roundNumber;
+                    finalsHeader.appendChild(headerCell);
+                    table.appendChild(finalsHeader);
+                }
+            }
 
             // Time/Status column
             const timeCell = document.createElement("td");
