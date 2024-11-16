@@ -10,7 +10,8 @@ Module.register("MMM-NRL", {
         focus_on: [],
         mode: "all",
         showFooter: true,
-        timeFormat: "dd, HH:mm"
+        timeFormat: "dd, HH:mm",
+        showSeasonProgress: true  // New option to show season progress
     },
 
     getScripts: function() {
@@ -33,7 +34,7 @@ Module.register("MMM-NRL", {
 
     getDom: function() {
         const wrapper = document.createElement("div");
-        wrapper.className = "MMM-NRL table";
+        wrapper.className = "MMM-NRL";
 
         if (!this.loaded) {
             wrapper.innerHTML = "Loading...";
@@ -45,6 +46,53 @@ Module.register("MMM-NRL", {
             wrapper.innerHTML = "No matches available";
             wrapper.className = "dimmed light small";
             return wrapper;
+        }
+
+        const container = document.createElement("div");
+        container.className = "container";
+
+        // Add season progress bar if enabled and we have a match
+        if (this.config.showSeasonProgress && this.matches[0]) {
+            const seasonProgress = document.createElement("div");
+            seasonProgress.className = "season-progress";
+            
+            // Determine season state from first match
+            const isOffSeason = this.matches[0].homeTeam === "OFF SEASON";
+            const isFinals = this.matches[0].roundNumber === "GF" || 
+                           (typeof this.matches[0].roundNumber === 'string' && 
+                            this.matches[0].roundNumber.includes("Finals"));
+
+            const progressBar = document.createElement("div");
+            progressBar.className = "progress-bar";
+
+            const progressText = document.createElement("div");
+            progressText.className = "progress-text";
+
+            if (isOffSeason) {
+                const nextYear = new Date().getFullYear() + 1;
+                progressText.innerHTML = `NRL ${nextYear} Season starts in March`;
+                progressBar.style.width = "0%";
+                progressBar.classList.add("off-season");
+            } else if (isFinals) {
+                progressText.innerHTML = "NRL Finals Series";
+                progressBar.style.width = "100%";
+                progressBar.classList.add("finals");
+            } else {
+                // Regular season - calculate progress (27 rounds)
+                const currentRound = parseInt(this.matches[0].roundNumber) || 0;
+                const progress = Math.min((currentRound / 27) * 100, 100);
+                progressText.innerHTML = `Round ${currentRound}/27`;
+                progressBar.style.width = progress + "%";
+                progressBar.classList.add("in-season");
+            }
+
+            const progressBarContainer = document.createElement("div");
+            progressBarContainer.className = "progress-bar-container";
+            progressBarContainer.appendChild(progressBar);
+
+            seasonProgress.appendChild(progressText);
+            seasonProgress.appendChild(progressBarContainer);
+            container.appendChild(seasonProgress);
         }
 
         const table = document.createElement("table");
@@ -81,31 +129,44 @@ Module.register("MMM-NRL", {
         // Create match rows
         this.matches.forEach((match) => {
             const row = document.createElement("tr");
+            row.className = match.status.toLowerCase();
 
             // Time/Status column
             const timeCell = document.createElement("td");
             timeCell.className = "date " + match.status.toLowerCase();
+            
+            // Enhanced status display
             if (match.status === "LIVE") {
                 timeCell.innerHTML = "LIVE";
-                timeCell.classList.add("bright");
+                timeCell.classList.add("bright", "blink");
             } else if (match.status === "COMPLETED") {
                 timeCell.innerHTML = "FT";
                 timeCell.classList.add("dimmed");
+            } else if (match.homeTeam === "OFF SEASON") {
+                timeCell.innerHTML = "OFF SEASON";
+                timeCell.classList.add("off-season");
+            } else if (match.roundNumber === "GF") {
+                timeCell.innerHTML = "GRAND FINAL";
+                timeCell.classList.add("finals", "bright");
             } else {
                 timeCell.innerHTML = match.time;
             }
             row.appendChild(timeCell);
 
-            // Home team name
+            // Home team name with ladder position
             const homeNameCell = document.createElement("td");
             homeNameCell.className = "firstTeam firstTeamName name";
-            homeNameCell.innerHTML = match.homeTeam;
+            let homeText = match.homeTeam;
+            if (this.config.showTablePosition && match.homeLadderPosition) {
+                homeText = `[${match.homeLadderPosition}] ${match.homeTeam}`;
+            }
+            homeNameCell.innerHTML = homeText;
             row.appendChild(homeNameCell);
 
             // Home team logo
             const homeLogoCell = document.createElement("td");
             homeLogoCell.className = "firstTeam firstTeamLogo logo";
-            if (this.config.showTeamLogos) {
+            if (this.config.showTeamLogos && match.homeTeam !== "OFF SEASON" && match.homeTeam !== "TBD") {
                 const homeLogo = document.createElement("img");
                 homeLogo.src = this.file("logos/" + match.homeTeam.toLowerCase().replace(/[^a-z0-9]/g, '') + ".png");
                 homeLogo.className = "team-logo" + (!this.config.colored ? " uncolored" : "");
@@ -121,7 +182,8 @@ Module.register("MMM-NRL", {
 
             // VS divider
             const vsCell = document.createElement("td");
-            vsCell.innerHTML = ":";
+            vsCell.className = "vs";
+            vsCell.innerHTML = match.status === "LIVE" ? "•" : ":";
             row.appendChild(vsCell);
 
             // Away team score
@@ -133,7 +195,7 @@ Module.register("MMM-NRL", {
             // Away team logo
             const awayLogoCell = document.createElement("td");
             awayLogoCell.className = "secondTeam secondTeamLogo logo";
-            if (this.config.showTeamLogos) {
+            if (this.config.showTeamLogos && match.awayTeam !== "2024" && match.awayTeam !== "TBD") {
                 const awayLogo = document.createElement("img");
                 awayLogo.src = this.file("logos/" + match.awayTeam.toLowerCase().replace(/[^a-z0-9]/g, '') + ".png");
                 awayLogo.className = "team-logo" + (!this.config.colored ? " uncolored" : "");
@@ -141,10 +203,14 @@ Module.register("MMM-NRL", {
             }
             row.appendChild(awayLogoCell);
 
-            // Away team name
+            // Away team name with ladder position
             const awayNameCell = document.createElement("td");
             awayNameCell.className = "secondTeam secondTeamName name";
-            awayNameCell.innerHTML = match.awayTeam;
+            let awayText = match.awayTeam;
+            if (this.config.showTablePosition && match.awayLadderPosition) {
+                awayText = `${match.awayTeam} [${match.awayLadderPosition}]`;
+            }
+            awayNameCell.innerHTML = awayText;
             row.appendChild(awayNameCell);
 
             // Highlight focused teams
@@ -174,7 +240,9 @@ Module.register("MMM-NRL", {
             table.appendChild(footerRow);
         }
 
-        wrapper.appendChild(table);
+        container.appendChild(table);
+        wrapper.appendChild(container);
+
         return wrapper;
     },
 

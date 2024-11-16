@@ -29,24 +29,33 @@ module.exports = NodeHelper.create({
             
             // Get current year and determine seasons to try
             const currentYear = new Date().getFullYear();
-            const seasons = [];
-            
-            // During late year (October-December), try completed season first
             const currentMonth = new Date().getMonth() + 1; // 1-12
-            if (currentMonth >= 10) {
-                seasons.push(currentYear);
-            } else if (currentMonth <= 2) {
-                seasons.push(currentYear - 1);
-                seasons.push(currentYear);
-            } else {
-                seasons.push(currentYear);
+
+            // Define NRL season months
+            const SEASON_START_MONTH = 3;  // March
+            const SEASON_END_MONTH = 10;   // October
+            const FINALS_END_MONTH = 10;   // October
+            const OFF_SEASON_MESSAGE = "NRL " + (currentYear + 1) + " Season starts in March";
+
+            // Determine if we're in season, finals, or off-season
+            let seasonState = "OFF_SEASON";
+            if (currentMonth >= SEASON_START_MONTH && currentMonth <= SEASON_END_MONTH) {
+                seasonState = "IN_SEASON";
+            } else if (currentMonth === FINALS_END_MONTH) {
+                seasonState = "FINALS";
             }
 
-            // If we're close to the new season (Jan-Mar), add next season
-            if (currentMonth >= 1 && currentMonth <= 3) {
+            console.log(this.name + `: Current season state: ${seasonState}`);
+
+            // Determine which seasons to try
+            const seasons = [];
+            if (seasonState === "IN_SEASON" || seasonState === "FINALS") {
+                seasons.push(currentYear);
+            } else if (currentMonth >= 11 || currentMonth <= 2) {
+                // During off-season, look for next year's fixtures
                 seasons.push(currentYear + 1);
             }
-            
+
             console.log(this.name + ": Will try seasons in order:", seasons.join(", "));
             
             let data = null;
@@ -87,59 +96,98 @@ module.exports = NodeHelper.create({
                 }
             }
 
-            // If we couldn't get data, use mock data
+            // If we couldn't get data, use appropriate mock data based on season state
             if (!data || !Array.isArray(data.games) || data.games.length === 0) {
                 console.log(this.name + ": No valid data found, using mock data");
                 console.log(this.name + ": Last error was: " + error);
                 
-                // Use mock data showing next season's first round
                 const nextYear = new Date().getFullYear() + 1;
-                const marchFirst = new Date(nextYear, 2, 1, 19, 30); // March 1st, 7:30 PM
                 
-                data = {
-                    games: [
-                        {
-                            homeTeam: {
-                                nickName: "Panthers",
-                                teamName: "Penrith Panthers",
-                                ladderPosition: 1
-                            },
-                            awayTeam: {
-                                nickName: "Broncos",
-                                teamName: "Brisbane Broncos",
-                                ladderPosition: 2
-                            },
-                            gameState: "Pre Game",
-                            kickOffDate: marchFirst.toISOString(),
-                            roundNumber: 1,
-                            venue: { name: "BlueBet Stadium" },
-                            scores: {
-                                home: 0,
-                                away: 0
+                if (seasonState === "OFF_SEASON") {
+                    // Show off-season message with next season's start
+                    const marchFirst = new Date(nextYear, 2, 1, 19, 30); // March 1st, 7:30 PM
+                    data = {
+                        games: [
+                            {
+                                homeTeam: {
+                                    nickName: "OFF SEASON",
+                                    teamName: "Off Season",
+                                    ladderPosition: null
+                                },
+                                awayTeam: {
+                                    nickName: "2024",
+                                    teamName: "2024",
+                                    ladderPosition: null
+                                },
+                                gameState: "Pre Game",
+                                kickOffDate: marchFirst.toISOString(),
+                                roundNumber: 1,
+                                venue: { name: "Season " + nextYear },
+                                scores: {
+                                    home: null,
+                                    away: null
+                                }
                             }
-                        },
-                        {
-                            homeTeam: {
-                                nickName: "Storm",
-                                teamName: "Melbourne Storm",
-                                ladderPosition: 3
-                            },
-                            awayTeam: {
-                                nickName: "Warriors",
-                                teamName: "Warriors",
-                                ladderPosition: 4
-                            },
-                            gameState: "Pre Game",
-                            kickOffDate: new Date(marchFirst.getTime() + 24 * 60 * 60 * 1000).toISOString(),
-                            roundNumber: 1,
-                            venue: { name: "AAMI Park" },
-                            scores: {
-                                home: 0,
-                                away: 0
+                        ]
+                    };
+                } else if (seasonState === "FINALS") {
+                    // Show finals series info or upcoming grand final
+                    const grandFinalDate = new Date(currentYear, 9, 1, 19, 30); // October 1st, 7:30 PM
+                    data = {
+                        games: [
+                            {
+                                homeTeam: {
+                                    nickName: "TBD",
+                                    teamName: "To Be Determined",
+                                    ladderPosition: 1
+                                },
+                                awayTeam: {
+                                    nickName: "TBD",
+                                    teamName: "To Be Determined",
+                                    ladderPosition: 2
+                                },
+                                gameState: "Pre Game",
+                                kickOffDate: grandFinalDate.toISOString(),
+                                roundNumber: "GF",
+                                venue: { name: "Accor Stadium" },
+                                scores: {
+                                    home: null,
+                                    away: null
+                                }
                             }
-                        }
-                    ]
-                };
+                        ]
+                    };
+                } else {
+                    // Regular season - show next round's fixtures
+                    const nextGameDate = new Date();
+                    nextGameDate.setDate(nextGameDate.getDate() + 7);
+                    nextGameDate.setHours(19, 30, 0, 0);
+                    
+                    data = {
+                        games: [
+                            {
+                                homeTeam: {
+                                    nickName: "Panthers",
+                                    teamName: "Penrith Panthers",
+                                    ladderPosition: 1
+                                },
+                                awayTeam: {
+                                    nickName: "Broncos",
+                                    teamName: "Brisbane Broncos",
+                                    ladderPosition: 2
+                                },
+                                gameState: "Pre Game",
+                                kickOffDate: nextGameDate.toISOString(),
+                                roundNumber: "Next Round",
+                                venue: { name: "BlueBet Stadium" },
+                                scores: {
+                                    home: null,
+                                    away: null
+                                }
+                            }
+                        ]
+                    };
+                }
             }
 
             // Transform API data to our format

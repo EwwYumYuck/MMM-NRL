@@ -7,17 +7,52 @@
 
 .MMM-NRL {
     width: 100%;
-    border-spacing: 0;
     padding: 0;
     margin: 0 auto;
     text-align: center;
 }
 
-.MMM-NRL .wrapper {
+.MMM-NRL .container {
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
     text-align: center;
+}
+
+.MMM-NRL .season-progress {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.MMM-NRL .progress-text {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #999;
+}
+
+.MMM-NRL .progress-bar-container {
+    width: 100%;
+    height: 4px;
+    background-color: #333;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.MMM-NRL .progress-bar {
+    height: 100%;
+    transition: width 1s ease-in-out;
+}
+
+.MMM-NRL .progress-bar.off-season {
+    background-color: #666;
+}
+
+.MMM-NRL .progress-bar.in-season {
+    background-color: #4CAF50;
+}
+
+.MMM-NRL .progress-bar.finals {
+    background-color: #FFC107;
 }
 
 .MMM-NRL .table {
@@ -48,13 +83,25 @@
     text-align: center;
 }
 
+.MMM-NRL tr {
+    transition: all 0.3s ease;
+}
+
+.MMM-NRL tr.live {
+    background-color: rgba(76, 175, 80, 0.1);
+}
+
+.MMM-NRL tr.completed {
+    opacity: 0.7;
+}
+
 .MMM-NRL .date {
     text-align: center;
     min-width: 45px;
 }
 
 .MMM-NRL .live {
-    color: #fff;
+    color: #4CAF50;
 }
 
 .MMM-NRL .completed {
@@ -63,6 +110,14 @@
 
 .MMM-NRL .scheduled {
     color: #999;
+}
+
+.MMM-NRL .off-season {
+    color: #FFC107;
+}
+
+.MMM-NRL .finals {
+    color: #FFC107;
 }
 
 .MMM-NRL .name {
@@ -87,6 +142,11 @@
     font-weight: bold;
 }
 
+.MMM-NRL .vs {
+    color: #666;
+    font-weight: bold;
+}
+
 .MMM-NRL .team-logo {
     height: 25px;
     width: 25px;
@@ -106,19 +166,20 @@
     color: #666;
 }
 
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.MMM-NRL .blink {
+    animation: blink 2s infinite;
+}
+
 .MMM-NRL .footer {
     text-align: center;
     font-size: 12px;
     color: #666;
     padding-top: 10px;
     border-top: 1px solid #333;
-}
-
-@keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-}
-
-.MMM-NRL tr {
-    animation: fadeIn 1s ease-in;
 }
