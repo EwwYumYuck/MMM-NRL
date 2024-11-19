@@ -74,10 +74,8 @@ module.exports = NodeHelper.create({
 
         // Function to format logo URL
         const formatLogoUrl = (team) => {
-            const logoPath = team.theme.logos["badge.svg"];
-            if (!logoPath) return null;
-            // Remove any double slashes and ensure proper URL format
-            return `https://www.nrl.com/remote.axd/${logoPath.replace(/^\/+/, '')}`;
+            if (!team.theme || !team.theme.key) return null;
+            return `https://www.nrl.com/content/dam/nrl/club-logos/${team.theme.key}/badge.svg`;
         };
 
         return {

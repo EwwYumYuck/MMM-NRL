@@ -47,10 +47,12 @@
     margin: 2px 4px;
     object-fit: contain;
     display: inline-block;
+    background-color: transparent;
 }
 
 .MMM-NRL .team-logo.grayscale {
     filter: grayscale(100%) brightness(120%) contrast(90%);
+    opacity: 0.9;
 }
 
 .MMM-NRL .live {
@@ -68,6 +70,10 @@
 
 .MMM-NRL .bright {
     color: #fff;
+}
+
+.MMM-NRL td img {
+    vertical-align: middle;
 }
 
 @keyframes blink {
