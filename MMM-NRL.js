@@ -110,14 +110,23 @@ Module.register("MMM-NRL", {
         const row = document.createElement("tr");
         row.className = "title bright";
 
+        // Helper function to create team logo
+        const createLogo = (logoUrl) => {
+            const logo = document.createElement("img");
+            logo.src = logoUrl;
+            logo.className = this.config.colored ? "team-logo" : "team-logo grayscale";
+            // Add error handling for logo loading
+            logo.onerror = function() {
+                this.style.display = "none";
+            };
+            return logo;
+        };
+
         // Home Team
         const homeCell = document.createElement("td");
         homeCell.className = "align-right";
-        if (this.config.showLogos) {
-            const homeLogo = document.createElement("img");
-            homeLogo.src = match.home.logo;
-            homeLogo.className = this.config.colored ? "team-logo" : "team-logo grayscale";
-            homeCell.appendChild(homeLogo);
+        if (this.config.showLogos && match.home.logo) {
+            homeCell.appendChild(createLogo(match.home.logo));
         }
         homeCell.innerHTML += ` ${match.home.name}`;
         row.appendChild(homeCell);
@@ -140,11 +149,8 @@ Module.register("MMM-NRL", {
         const awayCell = document.createElement("td");
         awayCell.className = "align-left";
         awayCell.innerHTML = match.away.name;
-        if (this.config.showLogos) {
-            const awayLogo = document.createElement("img");
-            awayLogo.src = match.away.logo;
-            awayLogo.className = this.config.colored ? "team-logo" : "team-logo grayscale";
-            awayCell.appendChild(awayLogo);
+        if (this.config.showLogos && match.away.logo) {
+            awayCell.appendChild(createLogo(match.away.logo));
         }
         row.appendChild(awayCell);
 

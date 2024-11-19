@@ -41,13 +41,16 @@
 
 .MMM-NRL .team-logo {
     height: 25px;
-    width: 25px;
+    width: auto;
+    max-width: 35px;
     vertical-align: middle;
-    margin: 2px;
+    margin: 2px 4px;
+    object-fit: contain;
+    display: inline-block;
 }
 
 .MMM-NRL .team-logo.grayscale {
-    filter: grayscale(100%) brightness(120%);
+    filter: grayscale(100%) brightness(120%) contrast(90%);
 }
 
 .MMM-NRL .live {

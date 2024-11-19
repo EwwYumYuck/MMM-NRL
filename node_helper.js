@@ -72,17 +72,25 @@ module.exports = NodeHelper.create({
         const awayTeam = fixture.awayTeam;
         const kickOffTime = moment(fixture.clock.kickOffTimeLong);
 
+        // Function to format logo URL
+        const formatLogoUrl = (team) => {
+            const logoPath = team.theme.logos["badge.svg"];
+            if (!logoPath) return null;
+            // Remove any double slashes and ensure proper URL format
+            return `https://www.nrl.com/remote.axd/${logoPath.replace(/^\/+/, '')}`;
+        };
+
         return {
             id: `${homeTeam.teamId}-${awayTeam.teamId}-${kickOffTime.format("YYYYMMDD")}`,
             home: {
                 name: homeTeam.nickName,
                 score: homeTeam.score || 0,
-                logo: `https://www.nrl.com/remote.axd/${homeTeam.theme.logos["badge.svg"]}`
+                logo: formatLogoUrl(homeTeam)
             },
             away: {
                 name: awayTeam.nickName,
                 score: awayTeam.score || 0,
-                logo: `https://www.nrl.com/remote.axd/${awayTeam.theme.logos["badge.svg"]}`
+                logo: formatLogoUrl(awayTeam)
             },
             starttime: kickOffTime.toISOString(),
             venue: fixture.venue,
