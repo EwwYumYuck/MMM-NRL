@@ -110,23 +110,14 @@ Module.register("MMM-NRL", {
         const row = document.createElement("tr");
         row.className = "title bright";
 
-        // Helper function to create team logo
-        const createLogo = (logoUrl) => {
-            const logo = document.createElement("img");
-            logo.src = logoUrl;
-            logo.className = this.config.colored ? "team-logo" : "team-logo grayscale";
-            // Add error handling for logo loading
-            logo.onerror = function() {
-                this.style.display = "none";
-            };
-            return logo;
-        };
-
         // Home Team
         const homeCell = document.createElement("td");
         homeCell.className = "align-right";
         if (this.config.showLogos && match.home.logo) {
-            homeCell.appendChild(createLogo(match.home.logo));
+            const logo = this.createLogo(match.home, !this.config.colored);
+            if (logo) {
+                homeCell.appendChild(logo);
+            }
         }
         homeCell.innerHTML += ` ${match.home.name}`;
         row.appendChild(homeCell);
@@ -150,7 +141,10 @@ Module.register("MMM-NRL", {
         awayCell.className = "align-left";
         awayCell.innerHTML = match.away.name;
         if (this.config.showLogos && match.away.logo) {
-            awayCell.appendChild(createLogo(match.away.logo));
+            const logo = this.createLogo(match.away, !this.config.colored);
+            if (logo) {
+                awayCell.appendChild(logo);
+            }
         }
         row.appendChild(awayCell);
 
@@ -167,5 +161,26 @@ Module.register("MMM-NRL", {
         }
 
         return row;
+    },
+
+    createLogo: function(team, isGrayscale) {
+        if (!team.logo) {
+            return null;
+        }
+        
+        const img = document.createElement("img");
+        img.className = "team-logo" + (isGrayscale ? " grayscale" : "");
+        img.src = team.logo;
+        img.alt = team.name;
+        img.width = 25;
+        img.height = 25;
+        
+        // Add error handling
+        img.onerror = function() {
+            img.style.display = 'none';
+            console.error("Error loading logo for team:", team.name);
+        };
+        
+        return img;
     }
 });

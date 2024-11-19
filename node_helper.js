@@ -74,8 +74,11 @@ module.exports = NodeHelper.create({
 
         // Function to format logo URL
         const formatLogoUrl = (team) => {
-            if (!team.theme || !team.theme.key) return null;
-            return `https://www.nrl.com/content/dam/nrl/club-logos/${team.theme.key}/badge.svg`;
+            if (!team || !team.theme || !team.theme.key) {
+                return null;
+            }
+            // Use the basic24 SVG version for consistent sizing
+            return `https://www.nrl.com/content/dam/nrl/club-logos/${team.theme.key}/badge-basic24.svg`;
         };
 
         return {

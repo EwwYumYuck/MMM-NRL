@@ -41,11 +41,10 @@
 
 .MMM-NRL .team-logo {
     height: 25px;
-    width: auto;
-    max-width: 35px;
+    width: 25px;
+    object-fit: contain;
     vertical-align: middle;
     margin: 2px 4px;
-    object-fit: contain;
     display: inline-block;
     background-color: transparent;
 }
