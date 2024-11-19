@@ -77,8 +77,33 @@ module.exports = NodeHelper.create({
             if (!team || !team.theme || !team.theme.key) {
                 return null;
             }
-            // Use the basic24 SVG version for consistent sizing
-            return `https://www.nrl.com/content/dam/nrl/club-logos/${team.theme.key}/badge-basic24.svg`;
+            // Map NRL API team keys to our local file names
+            const teamKeyMap = {
+                'sea-eagles': 'seaeagles',
+                'rabbitohs': 'rabbitohs',
+                'broncos': 'broncos',
+                'bulldogs': 'bulldogs',
+                'cowboys': 'cowboys',
+                'dragons': 'dragons',
+                'eels': 'eels',
+                'knights': 'knights',
+                'panthers': 'panthers',
+                'raiders': 'raiders',
+                'roosters': 'roosters',
+                'sharks': 'sharks',
+                'storm': 'storm',
+                'tigers': 'tigers',
+                'titans': 'titans',
+                'warriors': 'warriors',
+                'dolphins': 'dolphins'
+            };
+            
+            const localKey = teamKeyMap[team.theme.key];
+            if (!localKey) {
+                console.error(`Unknown team key from API: ${team.theme.key}`);
+                return null;
+            }
+            return `modules/MMM-NRL/logos/${localKey}.svg`;
         };
 
         return {
