@@ -177,7 +177,7 @@ Module.register("MMM-NRL", {
             venueRow.className = "dimmed small";
             const venueCell = document.createElement("td");
             venueCell.colSpan = 3;
-            venueCell.className = "align-center";
+            venueCell.className = "align-right venue-cell";
             venueCell.innerHTML = `${match.venue} - ${match.round}`;
             venueRow.appendChild(venueCell);
             return document.createDocumentFragment().appendChild(row).appendChild(venueRow).parentNode;

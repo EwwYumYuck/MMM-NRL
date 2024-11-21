@@ -13,7 +13,7 @@
 
 .MMM-NRL table {
     width: 100%;
-    border-spacing: 4px;
+    border-spacing: 2px;
     border-collapse: separate;
     color: #fff;
     table-layout: fixed;
@@ -24,7 +24,7 @@
 }
 
 .MMM-NRL td {
-    padding: 0 12px;
+    padding: 0 8px;
     line-height: 1.3;
     white-space: nowrap;
     overflow: hidden;
@@ -33,21 +33,26 @@
 
 .MMM-NRL .align-left {
     text-align: left;
-    width: 33%;
+    width: 28%;
 }
 
 .MMM-NRL .align-center {
     text-align: center;
-    width: 34%;
+    width: 20%;
 }
 
 .MMM-NRL .align-right {
     text-align: right;
-    width: 33%;
+    width: 28%;
 }
 
 .MMM-NRL .score-cell {
-    min-width: 80px;
+    min-width: 60px;
+}
+
+.MMM-NRL .venue-cell {
+    padding-left: 16px;
+    font-size: 90%;
 }
 
 .MMM-NRL .team-logo {
