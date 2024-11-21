@@ -34,26 +34,29 @@
 
 .MMM-NRL .align-left {
     text-align: left;
-    width: 25%;
+    width: 30%;
     padding-left: 0;
 }
 
 .MMM-NRL .align-center {
     text-align: center;
-    width: 15%;
-    position: relative;
-    left: -10px;
+    width: 20%;
+    padding: 0;
+    margin: 0 auto;
 }
 
 .MMM-NRL .align-right {
     text-align: left;
-    width: 25%;
+    width: 30%;
+    padding-left: 20px;
 }
 
 .MMM-NRL .score-cell {
-    min-width: 50px;
+    min-width: 60px;
     text-align: center;
     padding: 0;
+    position: relative;
+    left: 10px;
 }
 
 .MMM-NRL .venue-cell {
