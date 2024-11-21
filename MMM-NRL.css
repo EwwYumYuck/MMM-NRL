@@ -22,6 +22,10 @@
 
 .MMM-NRL tr {
     background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
 }
 
 .MMM-NRL td {
@@ -34,35 +38,35 @@
 
 .MMM-NRL .align-left {
     text-align: left;
-    width: 30%;
+    flex: 0 0 160px;  /* Fixed width for team names */
     padding-left: 0;
 }
 
 .MMM-NRL .align-center {
     text-align: center;
-    width: 20%;
+    flex: 0 0 80px;  /* Fixed width for score */
     padding: 0;
-    margin: 0 auto;
 }
 
 .MMM-NRL .align-right {
     text-align: left;
-    width: 30%;
+    flex: 0 0 160px;  /* Fixed width for team names */
     padding-left: 20px;
 }
 
 .MMM-NRL .score-cell {
-    min-width: 60px;
     text-align: center;
-    padding: 0;
-    position: relative;
-    left: 10px;
 }
 
 .MMM-NRL .venue-cell {
     padding-left: 0;
     font-size: 90%;
     text-align: left;
+}
+
+/* Adjust venue row */
+.MMM-NRL tr:nth-child(2) {
+    padding-left: 160px;  /* Align with first team */
 }
 
 .MMM-NRL .team-logo {
