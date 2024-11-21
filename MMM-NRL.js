@@ -17,7 +17,28 @@ Module.register("MMM-NRL", {
         showVenue: true,
         maximumEntries: 10,
         focus_on: false, // Team to focus on
-        mode: "all" // all, live, upcoming, completed
+        mode: "all", // all, live, upcoming, completed
+        useAbbreviations: true // New option to toggle abbreviations
+    },
+
+    teamAbbreviations: {
+        "Storm": "MEL",
+        "Raiders": "CAN",
+        "Panthers": "PEN",
+        "Titans": "GLD",
+        "Rabbitohs": "SOU",
+        "Warriors": "NZL",
+        "Sea Eagles": "MAN",
+        "Dragons": "STI",
+        "Eels": "PAR",
+        "Wests Tigers": "WST",
+        "Roosters": "SYD",
+        "Cowboys": "NQL",
+        "Knights": "NEW",
+        "Broncos": "BRI",
+        "Sharks": "CRO",
+        "Bulldogs": "CBY",
+        "Dolphins": "DOL"
     },
 
     start: function() {
@@ -119,12 +140,13 @@ Module.register("MMM-NRL", {
                 homeCell.appendChild(logo);
             }
         }
-        homeCell.innerHTML += ` ${match.home.name}`;
+        const homeName = this.config.useAbbreviations ? (this.teamAbbreviations[match.home.name] || match.home.name) : match.home.name;
+        homeCell.innerHTML += ` ${homeName}`;
         row.appendChild(homeCell);
 
         // Score
         const scoreCell = document.createElement("td");
-        scoreCell.className = "align-center";
+        scoreCell.className = "align-center score-cell";
         if (this.config.showScores && (match.status === "LIVE" || match.status === "FINISHED")) {
             scoreCell.innerHTML = `${match.home.score} - ${match.away.score}`;
         } else {
@@ -139,7 +161,8 @@ Module.register("MMM-NRL", {
         // Away Team
         const awayCell = document.createElement("td");
         awayCell.className = "align-left";
-        awayCell.innerHTML = match.away.name;
+        const awayName = this.config.useAbbreviations ? (this.teamAbbreviations[match.away.name] || match.away.name) : match.away.name;
+        awayCell.innerHTML = awayName;
         if (this.config.showLogos && match.away.logo) {
             const logo = this.createLogo(match.away, !this.config.colored);
             if (logo) {

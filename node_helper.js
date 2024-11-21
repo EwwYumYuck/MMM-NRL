@@ -92,7 +92,7 @@ module.exports = NodeHelper.create({
                 'roosters': 'roosters',
                 'sharks': 'sharks',
                 'storm': 'storm',
-                'tigers': 'tigers',
+                'wests-tigers': 'tigers',
                 'titans': 'titans',
                 'warriors': 'warriors',
                 'dolphins': 'dolphins'
