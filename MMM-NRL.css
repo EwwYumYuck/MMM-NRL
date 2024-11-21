@@ -41,6 +41,8 @@
 .MMM-NRL .align-center {
     text-align: center;
     width: 15%;
+    position: relative;
+    left: -10px;
 }
 
 .MMM-NRL .align-right {
@@ -50,6 +52,8 @@
 
 .MMM-NRL .score-cell {
     min-width: 50px;
+    text-align: center;
+    padding: 0;
 }
 
 .MMM-NRL .venue-cell {

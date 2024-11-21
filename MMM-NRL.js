@@ -18,7 +18,8 @@ Module.register("MMM-NRL", {
         maximumEntries: 10,
         focus_on: false, // Team to focus on
         mode: "all", // all, live, upcoming, completed
-        useAbbreviations: true // New option to toggle abbreviations
+        useAbbreviations: true, // New option to toggle abbreviations
+        header: "NRL Matches" // Configurable header text
     },
 
     teamAbbreviations: {
@@ -61,7 +62,7 @@ Module.register("MMM-NRL", {
         if (!this.loaded) {
             return "MMM-NRL - Loading...";
         }
-        return "NRL Matches";
+        return this.config.header;
     },
 
     socketNotificationReceived: function(notification, payload) {
