@@ -7,8 +7,9 @@
 
 .MMM-NRL {
     width: 100%;
-    padding: 0;
+    padding: 10px;
     margin: 0;
+    box-sizing: border-box;
 }
 
 .MMM-NRL table {
@@ -16,54 +17,77 @@
     border-spacing: 0;
     border-collapse: separate;
     color: #fff;
+    margin: 0 auto;
+    max-width: 800px; /* Prevent excessive width on large screens */
 }
 
 .MMM-NRL tr {
     background: transparent;
+    transition: background-color 0.3s ease;
+}
+
+.MMM-NRL tr:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .MMM-NRL td {
-    padding: 0;
-    line-height: 1.2;
+    padding: 8px 0;
+    line-height: 1.4;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    vertical-align: middle;
 }
 
+/* Team name columns - flexible width */
 .MMM-NRL .align-left {
     text-align: left;
-    padding-left: 10px;
+    padding-left: 15px;
+    min-width: 120px;
+    max-width: 200px;
 }
 
+/* Score/time column - fixed width */
 .MMM-NRL .align-center {
     text-align: center;
-    padding: 0 10px;
-    width: 65px;
+    padding: 0 15px;
+    width: 80px;
+    font-weight: 500;
 }
 
+/* Team name columns - flexible width */
 .MMM-NRL .align-right {
     text-align: right;
-    padding-right: 10px;
+    padding-right: 15px;
+    min-width: 120px;
+    max-width: 200px;
 }
 
 .MMM-NRL .score-cell {
     text-align: center;
+    font-weight: bold;
 }
 
 .MMM-NRL .venue-cell {
-    padding-left: 10px;
+    padding: 4px 15px;
     font-size: 90%;
     text-align: left;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .MMM-NRL .team-logo {
-    height: 25px;
-    width: 25px;
+    height: 30px;
+    width: 30px;
     object-fit: contain;
     vertical-align: middle;
-    margin: 2px 4px;
+    margin: 0 8px;
     display: inline-block;
     background-color: transparent;
+    transition: transform 0.2s ease;
+}
+
+.MMM-NRL tr:hover .team-logo {
+    transform: scale(1.1);
 }
 
 .MMM-NRL .team-logo.grayscale {
@@ -74,26 +98,48 @@
 .MMM-NRL .live {
     color: #ff4444;
     font-weight: bold;
+    animation: blink 2s ease-in-out infinite;
 }
 
 .MMM-NRL .dimmed {
-    color: #666;
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .MMM-NRL .small {
-    font-size: 80%;
+    font-size: 85%;
 }
 
 .MMM-NRL .bright {
     color: #fff;
 }
 
-.MMM-NRL td img {
-    vertical-align: middle;
+/* Responsive adjustments */
+@media screen and (max-width: 480px) {
+    .MMM-NRL {
+        padding: 5px;
+    }
+
+    .MMM-NRL td {
+        padding: 6px 0;
+    }
+
+    .MMM-NRL .align-left,
+    .MMM-NRL .align-right {
+        min-width: 100px;
+    }
+
+    .MMM-NRL .team-logo {
+        height: 25px;
+        width: 25px;
+        margin: 0 4px;
+    }
+
+    .MMM-NRL .venue-cell {
+        font-size: 80%;
+    }
 }
 
 @keyframes blink {
-    50% {
-        opacity: 0.5;
-    }
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
 }
