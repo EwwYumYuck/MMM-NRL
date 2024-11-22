@@ -103,7 +103,7 @@ When `useAbbreviations` is enabled, the following abbreviations are used:
 
 ## Screenshots
 
-[Add screenshots here]
+![MMM-NRL Module Screenshot](screenshot/mmm-nrl.png)
 
 ## Updating
 
