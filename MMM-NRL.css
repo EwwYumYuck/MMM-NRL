@@ -51,8 +51,9 @@
 .MMM-NRL .align-center {
     text-align: center;
     padding: 0 15px;
-    width: 80px;
+    width: 110px;
     font-weight: 500;
+    line-height: 1.2;
 }
 
 /* Team name columns - flexible width */
@@ -65,6 +66,18 @@
 
 .MMM-NRL .score-cell {
     text-align: center;
+    font-weight: bold;
+    padding: 4px 0;
+}
+
+.MMM-NRL .match-date {
+    font-size: 85%;
+    opacity: 0.9;
+    margin-bottom: 2px;
+    white-space: nowrap;
+}
+
+.MMM-NRL .match-time {
     font-weight: bold;
 }
 

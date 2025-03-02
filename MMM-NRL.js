@@ -152,7 +152,9 @@ Module.register("MMM-NRL", {
             scoreCell.innerHTML = `${match.home.score} - ${match.away.score}`;
         } else {
             const matchTime = new Date(match.starttime);
-            scoreCell.innerHTML = matchTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dateStr = matchTime.toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' });
+            scoreCell.innerHTML = `<div class="match-date">${dateStr}</div>`;
+            scoreCell.innerHTML += `<div class="match-time">${matchTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>`;
         }
         if (match.status === "LIVE") {
             scoreCell.className += " live";
