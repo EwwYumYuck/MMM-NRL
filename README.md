@@ -119,6 +119,10 @@ npm install
 
 Feel free to submit issues and pull requests!
 
+## Updates
+
+New team pending official announcement! Penrith Bears🧸! update Cowboys logo soon
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
