@@ -225,15 +225,18 @@ Module.register("MMM-NRL", {
         }
         row.appendChild(awayCell);
 
-        // Venue row — only in single-competition (non-grouped) mode
-        if (!grouped && this.config.showVenue && match.venue) {
+        // Venue row — grouped mode shows venue only (round is already in section header)
+        //            single mode shows venue + round
+        if (this.config.showVenue && match.venue) {
             const venueRow = document.createElement("tr");
             venueRow.className = "dimmed small";
             const venueCell = document.createElement("td");
             venueCell.colSpan = 3;
             venueCell.className = "align-right venue-cell";
-            let venueText = `${match.venue} - ${match.round}`;
-            if (this.config.showCompetition && match.competition) {
+            let venueText = grouped
+                ? match.venue
+                : `${match.venue} - ${match.round}`;
+            if (!grouped && this.config.showCompetition && match.competition) {
                 const label = this.competitionLabels[match.competition] || match.competition.toUpperCase();
                 venueText = `${label} | ${venueText}`;
             }

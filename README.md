@@ -199,6 +199,10 @@ No breaking changes.
 
 ---
 
+## Screenshot
+
+![MMM-NRL Module Screenshot](screenshot/mmm-nrl.png)
+
 ## Contributing
 
 Issues and pull requests are welcome!
