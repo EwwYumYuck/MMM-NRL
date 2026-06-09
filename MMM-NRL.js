@@ -37,7 +37,7 @@ Module.register("MMM-NRL", {
         "Panthers": "PEN",
         "Titans": "GLD",
         "Rabbitohs": "SOU",
-        "Warriors": "NZL",
+        "Warriors": "WAR",
         "Sea Eagles": "MAN",
         "Dragons": "STI",
         "Eels": "PAR",
