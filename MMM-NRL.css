@@ -156,3 +156,29 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.6; }
 }
+
+/* Grouped multi-competition layout */
+.MMM-NRL .nrl-group {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: separate;
+    color: #fff;
+    margin: 0 auto 10px auto;
+    max-width: 800px;
+}
+
+.MMM-NRL .competition-header {
+    text-align: left;
+    padding: 6px 0 4px 4px;
+    font-size: 80%;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.MMM-NRL .match-day {
+    opacity: 0.75;
+    font-size: 90%;
+}

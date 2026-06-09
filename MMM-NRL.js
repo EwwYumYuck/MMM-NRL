@@ -7,8 +7,8 @@
 
 Module.register("MMM-NRL", {
     defaults: {
-        updateInterval: 5 * 60 * 1000, // 5 minutes
-        updateIntervalLive: 60 * 1000, // 1 minute for live games
+        updateInterval: 5 * 60 * 1000,
+        updateIntervalLive: 60 * 1000,
         animationSpeed: 1000,
         colored: true,
         showLogos: true,
@@ -16,12 +16,12 @@ Module.register("MMM-NRL", {
         showTime: true,
         showVenue: true,
         maximumEntries: 10,
-        focus_on: false, // Team to focus on
+        focus_on: false,
         mode: "all", // all, live, upcoming, completed
         useAbbreviations: true,
         header: "NRL Matches",
         competitions: ["nrl"], // e.g. ["nrl", "nrlw", "soo", "wsoo"]
-        showCompetition: false  // show competition label in venue row
+        showCompetition: false  // legacy: label in venue row (single-competition mode only)
     },
 
     competitionLabels: {
@@ -62,7 +62,6 @@ Module.register("MMM-NRL", {
         this.loaded = false;
         this.matches = [];
         this.error = null;
-        
         this.sendSocketNotification("SET_CONFIG", this.config);
     },
 
@@ -71,12 +70,8 @@ Module.register("MMM-NRL", {
     },
 
     getHeader: function() {
-        if (this.error) {
-            return "MMM-NRL - Error";
-        }
-        if (!this.loaded) {
-            return "MMM-NRL - Loading...";
-        }
+        if (this.error) return "MMM-NRL - Error";
+        if (!this.loaded) return "MMM-NRL - Loading...";
         return this.config.header;
     },
 
@@ -93,27 +88,24 @@ Module.register("MMM-NRL", {
     },
 
     filterMatches: function(matches) {
-        let filteredMatches = matches;
+        let filtered = matches;
 
-        // Filter by mode
         if (this.config.mode === "live") {
-            filteredMatches = matches.filter(m => m.status === "LIVE");
+            filtered = matches.filter(m => m.status === "LIVE");
         } else if (this.config.mode === "upcoming") {
-            filteredMatches = matches.filter(m => m.status === "UPCOMING");
+            filtered = matches.filter(m => m.status === "UPCOMING");
         } else if (this.config.mode === "completed") {
-            filteredMatches = matches.filter(m => m.status === "FINISHED");
+            filtered = matches.filter(m => m.status === "FINISHED");
         }
 
-        // Filter by team if focus_on is set
         if (this.config.focus_on) {
-            filteredMatches = filteredMatches.filter(m => 
-                m.home.name.toLowerCase() === this.config.focus_on.toLowerCase() || 
+            filtered = filtered.filter(m =>
+                m.home.name.toLowerCase() === this.config.focus_on.toLowerCase() ||
                 m.away.name.toLowerCase() === this.config.focus_on.toLowerCase()
             );
         }
 
-        // Limit number of matches
-        return filteredMatches.slice(0, this.config.maximumEntries);
+        return filtered.slice(0, this.config.maximumEntries);
     },
 
     getDom: function() {
@@ -132,65 +124,109 @@ Module.register("MMM-NRL", {
             return wrapper;
         }
 
-        const matchesTable = document.createElement("table");
-        matchesTable.className = "small";
+        const competitions = this.config.competitions || ["nrl"];
+        const grouped = competitions.length > 1;
 
-        this.matches.forEach(match => {
-            matchesTable.appendChild(this.createMatchRow(match));
-        });
+        if (grouped) {
+            // Build a map of competition -> matches
+            const groups = {};
+            this.matches.forEach(match => {
+                const comp = match.competition || "nrl";
+                if (!groups[comp]) groups[comp] = [];
+                groups[comp].push(match);
+            });
 
-        wrapper.appendChild(matchesTable);
+            competitions.forEach(comp => {
+                const compMatches = groups[comp];
+                if (!compMatches || compMatches.length === 0) return;
+
+                const table = document.createElement("table");
+                table.className = "small nrl-group";
+
+                // Section header: e.g. "NRL — Round 15" or "SOO — Game 2"
+                const headerRow = document.createElement("tr");
+                const headerCell = document.createElement("td");
+                headerCell.colSpan = 3;
+                headerCell.className = "competition-header";
+                const label = this.competitionLabels[comp] || comp.toUpperCase();
+                const round = compMatches[0].round || "";
+                headerCell.textContent = round ? `${label} — ${round}` : label;
+                headerRow.appendChild(headerCell);
+                table.appendChild(headerRow);
+
+                compMatches.forEach(match => {
+                    table.appendChild(this.createMatchRow(match, true));
+                });
+
+                wrapper.appendChild(table);
+            });
+        } else {
+            // Single competition — original layout with venue rows
+            const table = document.createElement("table");
+            table.className = "small";
+            this.matches.forEach(match => {
+                const node = this.createMatchRow(match, false);
+                table.appendChild(node);
+            });
+            wrapper.appendChild(table);
+        }
+
         return wrapper;
     },
 
-    createMatchRow: function(match) {
+    createMatchRow: function(match, grouped) {
         const row = document.createElement("tr");
         row.className = "title bright";
 
-        // Home Team
+        // Home team
         const homeCell = document.createElement("td");
         homeCell.className = "align-right";
         if (this.config.showLogos && match.home.logo) {
             const logo = this.createLogo(match.home, !this.config.colored);
-            if (logo) {
-                homeCell.appendChild(logo);
-            }
+            if (logo) homeCell.appendChild(logo);
         }
-        const homeName = this.config.useAbbreviations ? (this.teamAbbreviations[match.home.name] || match.home.name) : match.home.name;
+        const homeName = this.config.useAbbreviations
+            ? (this.teamAbbreviations[match.home.name] || match.home.name)
+            : match.home.name;
         homeCell.innerHTML += ` ${homeName}`;
         row.appendChild(homeCell);
 
-        // Score
+        // Score / time
         const scoreCell = document.createElement("td");
         scoreCell.className = "align-center score-cell";
         if (this.config.showScores && (match.status === "LIVE" || match.status === "FINISHED")) {
             scoreCell.innerHTML = `${match.home.score} - ${match.away.score}`;
         } else {
             const matchTime = new Date(match.starttime);
-            const dateStr = matchTime.toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' });
-            scoreCell.innerHTML = `<div class="match-date">${dateStr}</div>`;
-            scoreCell.innerHTML += `<div class="match-time">${matchTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>`;
+            if (grouped) {
+                // Compact: "Wed 19:50"
+                const day = matchTime.toLocaleDateString([], { weekday: "short" });
+                const time = matchTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+                scoreCell.innerHTML = `<span class="match-day">${day}</span> <span class="match-time">${time}</span>`;
+            } else {
+                const dateStr = matchTime.toLocaleDateString([], { day: "numeric", month: "short", year: "numeric" });
+                scoreCell.innerHTML = `<div class="match-date">${dateStr}</div>`;
+                scoreCell.innerHTML += `<div class="match-time">${matchTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>`;
+            }
         }
-        if (match.status === "LIVE") {
-            scoreCell.className += " live";
-        }
+        if (match.status === "LIVE") scoreCell.className += " live";
         row.appendChild(scoreCell);
 
-        // Away Team
+        // Away team
         const awayCell = document.createElement("td");
         awayCell.className = "align-left";
-        const awayName = this.config.useAbbreviations ? (this.teamAbbreviations[match.away.name] || match.away.name) : match.away.name;
+        const awayName = this.config.useAbbreviations
+            ? (this.teamAbbreviations[match.away.name] || match.away.name)
+            : match.away.name;
         awayCell.innerHTML = awayName;
         if (this.config.showLogos && match.away.logo) {
             const logo = this.createLogo(match.away, !this.config.colored);
-            if (logo) {
-                awayCell.appendChild(logo);
-            }
+            if (logo) awayCell.appendChild(logo);
         }
         row.appendChild(awayCell);
 
-        // Venue (if enabled)
-        if (this.config.showVenue && match.venue) {
+        // Venue row — only in single-competition (non-grouped) mode
+        if (!grouped && this.config.showVenue && match.venue) {
             const venueRow = document.createElement("tr");
             venueRow.className = "dimmed small";
             const venueCell = document.createElement("td");
@@ -213,23 +249,17 @@ Module.register("MMM-NRL", {
     },
 
     createLogo: function(team, isGrayscale) {
-        if (!team.logo) {
-            return null;
-        }
-        
+        if (!team.logo) return null;
         const img = document.createElement("img");
         img.className = "team-logo" + (isGrayscale ? " grayscale" : "");
         img.src = team.logo;
         img.alt = team.name;
         img.width = 25;
         img.height = 25;
-        
-        // Add error handling
         img.onerror = function() {
-            img.style.display = 'none';
+            img.style.display = "none";
             console.error("Error loading logo for team:", team.name);
         };
-        
         return img;
     }
 });

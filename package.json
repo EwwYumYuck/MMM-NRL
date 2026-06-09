@@ -1,6 +1,6 @@
 {
   "name": "MMM-NRL",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "MagicMirror module for NRL scores and drawer",
   "main": "MMM-NRL.js",
   "author": "Daniel Uili",

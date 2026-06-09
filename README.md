@@ -1,81 +1,124 @@
 # MMM-NRL
 
-A MagicMirror² module for displaying NRL (National Rugby League) match scores and information.
+A MagicMirror² module that shows NRL match scores, upcoming fixtures, and results — built for footy fans who want it on their mirror without the fuss.
+
+Supports NRL, NRLW, State of Origin, and Women's State of Origin. Built with NZ and Pacific audiences in mind.
+
+---
+
+## What it does
+
+- Shows the **current round's matches** — upcoming games, live scores, and recent results
+- When a round finishes, it keeps showing the results until the next round's fixtures are available — so your mirror is never blank
+- If you enable multiple competitions, each one gets its own section with a clear header so it stays easy to read on a small screen
+- Live games get a faster refresh (every minute) and a blinking score so they stand out
+
+---
 
 ## Installation
 
-1. Navigate to your MagicMirror's modules folder:
+Navigate to your MagicMirror modules folder and clone the repo:
+
 ```bash
 cd ~/MagicMirror/modules
-```
-
-2. Clone this repository:
-```bash
 git clone https://github.com/EwwYumYuck/MMM-NRL
-```
-
-3. Install dependencies:
-```bash
 cd MMM-NRL
 npm install
 ```
 
-## Configuration
+---
 
-Add the following configuration to your `config/config.js` file:
+## Basic setup
+
+Add this to your `config/config.js`:
 
 ```javascript
 {
     module: "MMM-NRL",
     position: "top_right",
     config: {
-        header: "NRL Matches",         // Optional: Set to null to hide header
-        updateInterval: 300000,        // 5 minutes for regular updates
-        updateIntervalLive: 60000,     // 1 minute for live games
-        animationSpeed: 1000,
-        showLogos: true,
-        showScores: true,
-        showTime: true,
-        showVenue: true,
-        colored: true,                 // false for grayscale logos
-        maximumEntries: 10,
-        focus_on: false,              // Set to team name to focus on specific team
-        mode: "all",                  // "all", "live", "upcoming", or "completed"
-        useAbbreviations: true,       // Use team abbreviations (e.g., MEL, BRI)
-        competitions: ["nrl"],        // Add "nrlw", "soo", "wsoo" for more competitions
-        showCompetition: false        // Show competition label (e.g., NRLW | venue - round)
+        header: "NRL Matches"
     }
 }
 ```
 
-### Configuration Options
+That's it. By default it shows NRL Premiership fixtures for the current round, with logos, scores, venues, and team abbreviations all turned on.
 
-| Option             | Description                                                                                    | Default |
-|--------------------|------------------------------------------------------------------------------------------------|---------|
-| header             | Text to display in the header. Set to null to hide header                                      | "NRL Matches" |
-| updateInterval     | How often to fetch new data for regular updates (in milliseconds)                              | 300000 (5 minutes) |
-| updateIntervalLive | How often to fetch new data during live games (in milliseconds)                                | 60000 (1 minute) |
-| animationSpeed     | Speed of the update animation (in milliseconds)                                                | 1000 |
-| showLogos          | Whether to show team logos                                                                     | true |
-| showScores         | Whether to show match scores                                                                   | true |
-| showTime           | Whether to show match time                                                                     | true |
-| showVenue          | Whether to show match venue                                                                    | true |
-| colored            | Whether to show colored logos (false for grayscale)                                            | true |
-| maximumEntries     | Maximum number of matches to display                                                           | 10 |
-| focus_on           | Team name to focus on (e.g., "Storm", "Broncos"). Set to false to show all teams              | false |
-| mode               | Display mode: "all", "live", "upcoming", or "completed"                                        | "all" |
-| useAbbreviations   | Use team abbreviations instead of full names                                                   | true |
-| competitions       | Array of competitions to display: "nrl", "nrlw", "soo", "wsoo"                               | ["nrl"] |
-| showCompetition    | Show competition label in venue row (e.g., NRLW \| Accor Stadium - Round 1)                  | false |
+---
 
-### Team Abbreviations
+## Adding more competitions
 
-When `useAbbreviations` is enabled, the following abbreviations are used:
+Want NRLW and State of Origin on the same mirror? Just add them to the `competitions` array:
 
-#### NRL Premiership
+```javascript
+{
+    module: "MMM-NRL",
+    position: "middle_center",
+    config: {
+        header: "NRL / NRLW / Origin",
+        competitions: ["nrl", "nrlw", "soo"],
+        maximumEntries: 10
+    }
+}
+```
 
-| Team | Abbreviation |
-|------|--------------|
+Each competition shows as its own group with a header like `NRL — Round 15` or `SOO — Game 2`. No extra config needed — it figures out the layout automatically.
+
+Available competitions:
+
+| Value | Competition |
+|-------|-------------|
+| `"nrl"` | NRL Premiership (men's) — on by default |
+| `"nrlw"` | NRL Women's Premiership |
+| `"soo"` | Ampol State of Origin (men's) |
+| `"wsoo"` | Ampol Women's State of Origin |
+
+### What it looks like with multiple competitions
+
+```
+NRL — ROUND 15
+[logo] SOU  12 - 8   BRI [logo]   ← result from last game
+[logo] MEL  Wed 19:50  NQL [logo] ← coming up
+
+NRLW — ROUND 1
+[logo] BRI  20 - 14  DRG [logo]
+
+SOO — GAME 2
+[logo] NSW  Wed 20:00  QLD [logo]
+```
+
+Use `maximumEntries` to control how many matches show in total — handy if you have a small screen and multiple competitions enabled.
+
+---
+
+## All config options
+
+| Option | What it does | Default |
+|--------|-------------|---------|
+| `header` | Text shown at the top. Set to `null` to hide it | `"NRL Matches"` |
+| `competitions` | Which competitions to show — see above | `["nrl"]` |
+| `maximumEntries` | Max number of matches to show across all competitions | `10` |
+| `mode` | Filter to `"all"`, `"live"`, `"upcoming"`, or `"completed"` | `"all"` |
+| `focus_on` | Only show matches involving one team e.g. `"Warriors"` | `false` |
+| `showLogos` | Show team badge logos | `true` |
+| `showScores` | Show scores for live and completed games | `true` |
+| `showVenue` | Show venue and round info (single competition only) | `true` |
+| `showTime` | Show kick-off time for upcoming games | `true` |
+| `colored` | Coloured logos — set to `false` for grayscale | `true` |
+| `useAbbreviations` | Use short team codes like MEL, BRI instead of full names | `true` |
+| `updateInterval` | How often to refresh data (milliseconds) | `300000` (5 min) |
+| `updateIntervalLive` | Refresh rate during live games | `60000` (1 min) |
+| `animationSpeed` | Transition speed when the display updates | `1000` |
+| `showCompetition` | Single-competition mode only: show comp label in venue row | `false` |
+
+---
+
+## Team abbreviations
+
+### NRL Premiership
+
+| Team | Code |
+|------|------|
 | Broncos | BRI |
 | Bulldogs | CBY |
 | Cowboys | NQL |
@@ -94,95 +137,72 @@ When `useAbbreviations` is enabled, the following abbreviations are used:
 | Warriors | WAR |
 | Wests Tigers | WST |
 
-#### NRLW — Women's Premiership
+### NRLW — Women's Premiership
 
-NRLW teams share the same names and abbreviations as their NRL counterparts above.
+NRLW teams use the same names and codes as their NRL counterparts above.
 
-#### State of Origin
+### State of Origin
 
-| Team | Abbreviation |
-|------|--------------|
+| Team | Code |
+|------|------|
 | Blues | NSW |
 | Maroons | QLD |
 
-#### Expansion Teams
+### Expansion teams
 
-| Team | Abbreviation |
-|------|--------------|
-| Perth | PER |
-| Chiefs | PNG |
+| Team | Code | Joining |
+|------|------|---------|
+| Perth | PER | 2027 |
+| Chiefs | PNG | 2027+ |
 
-## Multi-Competition Usage
+Perth Bears and PNG Chiefs are already wired up — logos and abbreviations are ready to go and will appear automatically once the NRL API starts including them.
 
-You can display multiple competitions at once by setting the `competitions` array. Each competition pulls from the NRL draw API independently and results are merged and sorted by date.
+---
 
-Available competition values:
-
-| Value | Competition |
-|-------|-------------|
-| `"nrl"` | NRL Premiership (men's) — default |
-| `"nrlw"` | NRL Women's Premiership |
-| `"soo"` | Ampol State of Origin (men's) |
-| `"wsoo"` | Ampol Women's State of Origin |
-
-Example — show NRL, NRLW and State of Origin together:
-
-```javascript
-{
-    module: "MMM-NRL",
-    position: "top_right",
-    config: {
-        competitions: ["nrl", "nrlw", "soo"],
-        showCompetition: true,
-        header: "NRL / NRLW / Origin"
-    }
-}
-```
-
-With `showCompetition: true` the venue row shows which competition each match belongs to:
-```
-NRLW | Cbus Super Stadium - Round 1
-SOO  | Accor Stadium - Game 2
-```
-
-## Features
-
-- Multi-competition display — NRL, NRLW, State of Origin (men's and women's)
-- Live match scores and updates
-- Team logos (colored or grayscale)
-- Match venues and round information
-- Configurable update intervals (faster updates during live games)
-- Filter matches by team or status
-- Competition label display to distinguish NRL from NRLW and SoO
-- Team name abbreviations (e.g., MEL, BRI, WAR)
-- Clean and modern design
-- Customizable header text
-- Automatic live game detection for faster updates
-- Perth Bears (2027) and PNG Chiefs (2027+) pre-wired — logos and abbreviations ready, will display automatically when the NRL API includes them
-
-## Screenshots
-
-![MMM-NRL Module Screenshot](screenshot/mmm-nrl.png)
-
-## Updating
-
-To update the module to the latest version:
+## Keeping it up to date
 
 ```bash
 cd ~/MagicMirror/modules/MMM-NRL
 git pull
-npm install
+pm2 restart MagicMirror
 ```
+
+You only need to run `npm install` again if the changelog says new packages were added.
+
+---
+
+## Changelog
+
+### v0.3.0 — 2026-06-09
+No breaking changes — existing configs work as-is.
+
+- **Compact grouped layout** for multi-competition setups — each competition gets a section header (e.g. `NRL — Round 15`) instead of a venue row per match, which cuts vertical space roughly in half on small screens
+- **Current round only** — the module now always shows the current round's fixtures; results stay visible after a round ends until the next round's games are published
+- **Compact date format** — upcoming games in grouped mode show as `Wed 19:50` rather than a two-line date and time
+- `showVenue` now applies to single-competition mode only
+
+### v0.2.0 — 2026-06-09
+No breaking changes.
+
+- **Multi-competition support** — NRL, NRLW, State of Origin, Women's SoO all from one module
+- **Perth Bears and PNG Chiefs pre-wired** for their 2027/2028 NRL entries
+- Fixed a bug where the venue row was rendering incorrectly
+- Fixed API errors showing silently instead of surfacing on the display
+- Fixed `Upcoming` match state not being handled correctly
+- Corrected Warriors abbreviation from `NZL` to `WAR`
+
+### v0.1.0 — Initial release
+- NRL Premiership fixtures, scores, and venues
+- Team logos with colored and grayscale support
+- Live match detection with faster refresh
+- Configurable header, mode, team focus, and abbreviations
+
+---
 
 ## Contributing
 
-Feel free to submit issues and pull requests!
-
-## Updates
-
-- Multi-competition support added: NRLW, State of Origin (men's and women's)
-- Perth Bears (2027) and PNG Chiefs (2027+) pre-wired — will appear automatically when NRL API includes them
+Issues and pull requests are welcome!
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT
