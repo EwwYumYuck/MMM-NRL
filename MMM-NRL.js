@@ -209,6 +209,10 @@ Module.register("MMM-NRL", {
                 scoreCell.innerHTML += `<div class="match-time">${matchTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>`;
             }
         }
+        // Grouped: venue shown inline under the time — no extra row needed
+        if (grouped && this.config.showVenue && match.venue) {
+            scoreCell.innerHTML += `<div class="venue-inline">${match.venue}</div>`;
+        }
         if (match.status === "LIVE") scoreCell.className += " live";
         row.appendChild(scoreCell);
 
@@ -225,18 +229,15 @@ Module.register("MMM-NRL", {
         }
         row.appendChild(awayCell);
 
-        // Venue row — grouped mode shows venue only (round is already in section header)
-        //            single mode shows venue + round
-        if (this.config.showVenue && match.venue) {
+        // Venue row — single mode only (grouped shows venue inline in score cell above)
+        if (!grouped && this.config.showVenue && match.venue) {
             const venueRow = document.createElement("tr");
             venueRow.className = "dimmed small";
             const venueCell = document.createElement("td");
             venueCell.colSpan = 3;
-            venueCell.className = "align-right venue-cell";
-            let venueText = grouped
-                ? match.venue
-                : `${match.venue} - ${match.round}`;
-            if (!grouped && this.config.showCompetition && match.competition) {
+            venueCell.className = "venue-cell";
+            let venueText = `${match.venue} - ${match.round}`;
+            if (this.config.showCompetition && match.competition) {
                 const label = this.competitionLabels[match.competition] || match.competition.toUpperCase();
                 venueText = `${label} | ${venueText}`;
             }

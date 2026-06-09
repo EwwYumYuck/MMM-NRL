@@ -29,8 +29,8 @@
 }
 
 .MMM-NRL td {
-    padding: 8px 0;
-    line-height: 1.4;
+    padding: 5px 0;
+    line-height: 1.3;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -129,7 +129,7 @@
     }
 
     .MMM-NRL td {
-        padding: 6px 0;
+        padding: 4px 0;
     }
 
     .MMM-NRL .align-left,
@@ -175,4 +175,14 @@
 .MMM-NRL .match-day {
     opacity: 0.75;
     font-size: 90%;
+}
+
+/* Venue shown inline under time in grouped mode */
+.MMM-NRL .venue-inline {
+    font-size: 72%;
+    opacity: 0.5;
+    font-weight: normal;
+    margin-top: 1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
