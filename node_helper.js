@@ -2,105 +2,123 @@ const NodeHelper = require("node_helper");
 const fetch = require("node-fetch");
 const moment = require("moment");
 
+const COMPETITION_IDS = {
+    "nrl":  111,
+    "nrlw": 161,
+    "soo":  116,
+    "wsoo": 156
+};
+
+const TEAM_KEY_MAP = {
+    "sea-eagles":   "seaeagles",
+    "rabbitohs":    "rabbitohs",
+    "broncos":      "broncos",
+    "bulldogs":     "bulldogs",
+    "cowboys":      "cowboys",
+    "dragons":      "dragons",
+    "eels":         "eels",
+    "knights":      "knights",
+    "panthers":     "panthers",
+    "raiders":      "raiders",
+    "roosters":     "roosters",
+    "sharks":       "sharks",
+    "storm":        "storm",
+    "wests-tigers": "tigers",
+    "titans":       "titans",
+    "warriors":     "warriors",
+    "dolphins":     "dolphins",
+    // State of Origin
+    "blues":        "blues",
+    "maroons":      "maroons",
+    // Expansion teams — keys added ahead of 2027/2028 NRL entry
+    "perth-bears":  "perth-bears",
+    "png-chiefs":   "png-chiefs"
+};
+
 module.exports = NodeHelper.create({
     start: function() {
         this.config = null;
-        this.updateInterval = null;
-        this.live = false;
     },
 
     socketNotificationReceived: function(notification, payload) {
         if (notification === "SET_CONFIG") {
             this.config = payload;
-            this.updateInterval = this.config.updateInterval;
             this.getData();
         }
     },
 
     getData: async function() {
         try {
-            console.log(this.name + ": Fetching NRL data...");
-            
-            const response = await fetch("https://www.nrl.com/draw/data", {
-                headers: {
-                    "User-Agent": "Mozilla/5.0",
-                    "Accept": "application/json"
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            const fixtures = data.fixtures || [];
-            
-            const matches = fixtures.map(fixture => this.formatMatch(fixture));
-            
-            // Sort matches by date
-            matches.sort((a, b) => new Date(a.starttime) - new Date(b.starttime));
+            const competitions = this.config.competitions || ["nrl"];
+            const allMatches = [];
 
-            const payload = {
-                matches: matches,
+            for (const comp of competitions) {
+                const compId = typeof comp === "number"
+                    ? comp
+                    : (COMPETITION_IDS[comp.toLowerCase()] || null);
+
+                if (!compId) {
+                    console.warn(this.name + ": Unknown competition identifier: " + comp);
+                    continue;
+                }
+
+                try {
+                    console.log(this.name + `: Fetching ${comp} data (id=${compId})...`);
+                    const response = await fetch(`https://www.nrl.com/draw/data?competition=${compId}`, {
+                        headers: {
+                            "User-Agent": "Mozilla/5.0",
+                            "Accept": "application/json"
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    (data.fixtures || []).forEach(fixture => {
+                        allMatches.push(this.formatMatch(fixture, String(comp)));
+                    });
+
+                } catch (compError) {
+                    console.error(this.name + `: Error fetching ${comp} -`, compError.message);
+                }
+            }
+
+            allMatches.sort((a, b) => new Date(a.starttime) - new Date(b.starttime));
+
+            this.sendSocketNotification("DATA", {
+                matches: allMatches,
                 details: {
-                    season: data.selectedSeasonId,
-                    competition: "NRL",
+                    competitions: competitions,
                     lastUpdated: new Date().toISOString()
                 }
-            };
+            });
 
-            this.sendSocketNotification("DATA", payload);
-            
-            // Schedule next update based on if there are live games
-            const hasLiveGames = matches.some(match => match.matchState === "InProgress");
-            const nextInterval = hasLiveGames ? this.config.updateIntervalLive : this.config.updateInterval;
-            
-            setTimeout(() => {
-                this.getData();
-            }, nextInterval);
+            const hasLiveGames = allMatches.some(m => m.status === "LIVE");
+            const nextInterval = hasLiveGames
+                ? this.config.updateIntervalLive
+                : this.config.updateInterval;
+
+            setTimeout(() => this.getData(), nextInterval);
 
         } catch (error) {
-            console.error(this.name + ": Error fetching NRL data -", error);
-            setTimeout(() => {
-                this.getData();
-            }, this.config.updateInterval);
+            console.error(this.name + ": Error fetching data -", error);
+            this.sendSocketNotification("ERROR", error.message);
+            setTimeout(() => this.getData(), this.config.updateInterval);
         }
     },
 
-    formatMatch: function(fixture) {
+    formatMatch: function(fixture, competition) {
         const homeTeam = fixture.homeTeam;
         const awayTeam = fixture.awayTeam;
         const kickOffTime = moment(fixture.clock.kickOffTimeLong);
 
-        // Function to format logo URL
         const formatLogoUrl = (team) => {
-            if (!team || !team.theme || !team.theme.key) {
-                return null;
-            }
-            // Map NRL API team keys to our local file names
-            const teamKeyMap = {
-                'sea-eagles': 'seaeagles',
-                'rabbitohs': 'rabbitohs',
-                'broncos': 'broncos',
-                'bulldogs': 'bulldogs',
-                'cowboys': 'cowboys',
-                'dragons': 'dragons',
-                'eels': 'eels',
-                'knights': 'knights',
-                'panthers': 'panthers',
-                'raiders': 'raiders',
-                'roosters': 'roosters',
-                'sharks': 'sharks',
-                'storm': 'storm',
-                'wests-tigers': 'tigers',
-                'titans': 'titans',
-                'warriors': 'warriors',
-                'dolphins': 'dolphins'
-            };
-            
-            const localKey = teamKeyMap[team.theme.key];
+            if (!team || !team.theme || !team.theme.key) return null;
+            const localKey = TEAM_KEY_MAP[team.theme.key];
             if (!localKey) {
-                console.error(`Unknown team key from API: ${team.theme.key}`);
+                console.warn(this.name + ": No logo mapping for team key: " + team.theme.key);
                 return null;
             }
             return `modules/MMM-NRL/logos/${localKey}.svg`;
@@ -122,6 +140,7 @@ module.exports = NodeHelper.create({
             venue: fixture.venue,
             status: this.getMatchStatus(fixture.matchState),
             round: fixture.roundTitle,
+            competition: competition,
             live: fixture.matchState === "InProgress"
         };
     },
@@ -129,13 +148,14 @@ module.exports = NodeHelper.create({
     getMatchStatus: function(matchState) {
         switch (matchState) {
             case "PreGame":
+            case "Upcoming":
                 return "UPCOMING";
             case "InProgress":
                 return "LIVE";
             case "FullTime":
                 return "FINISHED";
             default:
-                return matchState.toUpperCase();
+                return matchState ? matchState.toUpperCase() : "UNKNOWN";
         }
     }
 });

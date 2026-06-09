@@ -1,0 +1,7 @@
+<svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="48" fill="#6B003A"/>
+  <path d="M50 8 L88 32 L88 68 L50 92 L12 68 L12 32 Z" fill="#520030" stroke="#C8A050" stroke-width="1.5"/>
+  <text x="50" y="44" font-family="Arial,sans-serif" font-size="14" font-weight="bold" fill="#C8A050" text-anchor="middle" letter-spacing="2">QUEENS</text>
+  <text x="50" y="58" font-family="Arial,sans-serif" font-size="14" font-weight="bold" fill="#C8A050" text-anchor="middle" letter-spacing="2">LAND</text>
+  <text x="50" y="74" font-family="Arial,sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">MAROONS</text>
+</svg>

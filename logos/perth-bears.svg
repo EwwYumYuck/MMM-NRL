@@ -1,0 +1,11 @@
+<svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="48" fill="#0D1B5C"/>
+  <path d="M50 8 L88 32 L88 68 L50 92 L12 68 L12 32 Z" fill="#091444" stroke="#D4AF37" stroke-width="2"/>
+  <text x="50" y="40" font-family="Arial,sans-serif" font-size="13" font-weight="bold" fill="#D4AF37" text-anchor="middle" letter-spacing="2">PERTH</text>
+  <!-- Bear paw print -->
+  <circle cx="50" cy="54" r="7" fill="#D4AF37"/>
+  <circle cx="41" cy="46" r="4" fill="#D4AF37"/>
+  <circle cx="50" cy="43" r="4" fill="#D4AF37"/>
+  <circle cx="59" cy="46" r="4" fill="#D4AF37"/>
+  <text x="50" y="79" font-family="Arial,sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">BEARS</text>
+</svg>

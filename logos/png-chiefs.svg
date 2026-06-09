@@ -1,0 +1,15 @@
+<svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- PNG flag colours: red, black, yellow (Bird of Paradise) -->
+  <circle cx="50" cy="50" r="48" fill="#111111"/>
+  <path d="M50 8 L88 32 L88 68 L50 92 L12 68 L12 32 Z" fill="#0D0D0D" stroke="#CE1126" stroke-width="2"/>
+  <!-- Diagonal split: top-right red, bottom-left black -->
+  <path d="M50 8 L88 32 L88 68 L50 92 Z" fill="#CE1126"/>
+  <!-- Bird of Paradise star cluster suggestion -->
+  <circle cx="68" cy="38" r="3.5" fill="#FCD116"/>
+  <circle cx="74" cy="46" r="2.5" fill="#FCD116"/>
+  <circle cx="63" cy="48" r="2"   fill="#FCD116"/>
+  <circle cx="72" cy="32" r="2"   fill="#FCD116"/>
+  <circle cx="78" cy="39" r="2"   fill="#FCD116"/>
+  <text x="50" y="68" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#FCD116" text-anchor="middle" letter-spacing="2">PNG</text>
+  <text x="50" y="81" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">CHIEFS</text>
+</svg>

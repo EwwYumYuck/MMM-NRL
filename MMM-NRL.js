@@ -18,8 +18,17 @@ Module.register("MMM-NRL", {
         maximumEntries: 10,
         focus_on: false, // Team to focus on
         mode: "all", // all, live, upcoming, completed
-        useAbbreviations: true, // New option to toggle abbreviations
-        header: "NRL Matches" // Configurable header text
+        useAbbreviations: true,
+        header: "NRL Matches",
+        competitions: ["nrl"], // e.g. ["nrl", "nrlw", "soo", "wsoo"]
+        showCompetition: false  // show competition label in venue row
+    },
+
+    competitionLabels: {
+        "nrl":  "NRL",
+        "nrlw": "NRLW",
+        "soo":  "SOO",
+        "wsoo": "WSOO"
     },
 
     teamAbbreviations: {
@@ -39,7 +48,13 @@ Module.register("MMM-NRL", {
         "Broncos": "BRI",
         "Sharks": "CRO",
         "Bulldogs": "CBY",
-        "Dolphins": "DOL"
+        "Dolphins": "DOL",
+        // State of Origin
+        "Blues": "NSW",
+        "Maroons": "QLD",
+        // Expansion teams (2027/2028)
+        "Bears": "PER",
+        "Chiefs": "PNG"
     },
 
     start: function() {
@@ -181,9 +196,17 @@ Module.register("MMM-NRL", {
             const venueCell = document.createElement("td");
             venueCell.colSpan = 3;
             venueCell.className = "align-right venue-cell";
-            venueCell.innerHTML = `${match.venue} - ${match.round}`;
+            let venueText = `${match.venue} - ${match.round}`;
+            if (this.config.showCompetition && match.competition) {
+                const label = this.competitionLabels[match.competition] || match.competition.toUpperCase();
+                venueText = `${label} | ${venueText}`;
+            }
+            venueCell.innerHTML = venueText;
             venueRow.appendChild(venueCell);
-            return document.createDocumentFragment().appendChild(row).appendChild(venueRow).parentNode;
+            const fragment = document.createDocumentFragment();
+            fragment.appendChild(row);
+            fragment.appendChild(venueRow);
+            return fragment;
         }
 
         return row;
