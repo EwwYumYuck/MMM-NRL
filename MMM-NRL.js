@@ -229,7 +229,7 @@ Module.register("MMM-NRL", {
                 scoreCell.appendChild(document.createTextNode(" "));
                 scoreCell.appendChild(timeSpan);
             } else {
-                const dateStr = matchTime.toLocaleDateString([], { day: "numeric", month: "short", year: "numeric" });
+                const dateStr = matchTime.toLocaleDateString([], { day: "numeric", month: "short" });
                 const dateDiv = document.createElement("div");
                 dateDiv.className = "match-date";
                 dateDiv.textContent = dateStr;
