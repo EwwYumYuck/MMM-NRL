@@ -37,7 +37,7 @@ Add this to your `config/config.js`:
     module: "MMM-NRL",
     position: "top_right",
     config: {
-        header: "NRL Matches"
+        header: null    // null = auto ("NRL Matches", "State of Origin", etc.) or set a custom string
     }
 }
 ```
@@ -95,7 +95,7 @@ Use `maximumEntries` to control how many matches show in total — handy if you 
 
 | Option | What it does | Default |
 |--------|-------------|---------|
-| `header` | Text shown at the top. Set to `null` to hide it | `"NRL Matches"` |
+| `header` | Text shown at the top. `null` = auto-generated from competition | `null` |
 | `competitions` | Which competitions to show — see above | `["nrl"]` |
 | `maximumEntries` | Max number of matches to show across all competitions | `10` |
 | `mode` | Filter to `"all"`, `"live"`, `"upcoming"`, or `"completed"` | `"all"` |
@@ -172,6 +172,14 @@ You only need to run `npm install` again if the changelog says new packages were
 ---
 
 ## Changelog
+
+### v0.4.0 — 2026-06-12
+No breaking changes — existing configs work as-is.
+
+- **Alignment fix** — all competitions (NRL, SOO, NRLW) now use equal fixed-width team columns so QLD/NSW display is consistent with MEL/BRI
+- **Fixed venue row HTML bug** — venue row was incorrectly nested inside the match row; now properly rendered as a sibling `<tr>`
+- **DOM safety** — replaced `innerHTML` with `textContent`/`createElement` throughout
+- **Extended SOO abbreviations** — module now recognises `"Queensland Maroons"`, `"Queensland"`, `"New South Wales Blues"` etc. from the API
 
 ### v0.3.0 — 2026-06-09
 No breaking changes — existing configs work as-is.

@@ -19,9 +19,9 @@ Module.register("MMM-NRL", {
         focus_on: false,
         mode: "all", // all, live, upcoming, completed
         useAbbreviations: true,
-        header: "NRL Matches",
-        competitions: ["nrl"], // e.g. ["nrl", "nrlw", "soo", "wsoo"]
-        showCompetition: false  // legacy: label in venue row (single-competition mode only)
+        competitions: ["nrl"], // ["nrl", "nrlw", "soo", "wsoo"]
+        header: null,          // null = auto-generate from competition
+        showCompetition: false
     },
 
     competitionLabels: {
@@ -31,7 +31,15 @@ Module.register("MMM-NRL", {
         "wsoo": "WSOO"
     },
 
+    competitionHeaders: {
+        "nrl":  "NRL Matches",
+        "nrlw": "NRLW Matches",
+        "soo":  "State of Origin",
+        "wsoo": "Women's State of Origin"
+    },
+
     teamAbbreviations: {
+        // NRL / NRLW clubs
         "Storm": "MEL",
         "Raiders": "CAN",
         "Panthers": "PEN",
@@ -49,12 +57,16 @@ Module.register("MMM-NRL", {
         "Sharks": "CRO",
         "Bulldogs": "CBY",
         "Dolphins": "DOL",
-        // State of Origin
-        "Blues": "NSW",
-        "Maroons": "QLD",
-        // Expansion teams (2027/2028)
+        // Expansion teams
         "Bears": "PER",
-        "Chiefs": "PNG"
+        "Chiefs": "PNG",
+        // State of Origin — multiple name forms the API may return
+        "Queensland Maroons": "QLD",
+        "Queensland": "QLD",
+        "Maroons": "QLD",
+        "New South Wales Blues": "NSW",
+        "New South Wales": "NSW",
+        "Blues": "NSW"
     },
 
     start: function() {
@@ -62,6 +74,10 @@ Module.register("MMM-NRL", {
         this.loaded = false;
         this.matches = [];
         this.error = null;
+        // Support legacy singular competition config
+        if (this.config.competition && !this.config.competitions) {
+            this.config.competitions = [this.config.competition];
+        }
         this.sendSocketNotification("SET_CONFIG", this.config);
     },
 
@@ -72,7 +88,12 @@ Module.register("MMM-NRL", {
     getHeader: function() {
         if (this.error) return "MMM-NRL - Error";
         if (!this.loaded) return "MMM-NRL - Loading...";
-        return this.config.header;
+        if (this.config.header !== null && this.config.header !== undefined) return this.config.header;
+        const competitions = this.config.competitions || ["nrl"];
+        if (competitions.length === 1) {
+            return this.competitionHeaders[competitions[0]] || "NRL Matches";
+        }
+        return "NRL Matches";
     },
 
     socketNotificationReceived: function(notification, payload) {
@@ -113,14 +134,14 @@ Module.register("MMM-NRL", {
         wrapper.className = "MMM-NRL";
 
         if (this.error) {
-            wrapper.innerHTML = `Error: ${this.error}`;
             wrapper.className = "dimmed light small";
+            wrapper.textContent = `Error: ${this.error}`;
             return wrapper;
         }
 
         if (!this.loaded) {
-            wrapper.innerHTML = "Loading...";
             wrapper.className = "dimmed light small";
+            wrapper.textContent = "Loading...";
             return wrapper;
         }
 
@@ -128,7 +149,6 @@ Module.register("MMM-NRL", {
         const grouped = competitions.length > 1;
 
         if (grouped) {
-            // Build a map of competition -> matches
             const groups = {};
             this.matches.forEach(match => {
                 const comp = match.competition || "nrl";
@@ -143,7 +163,6 @@ Module.register("MMM-NRL", {
                 const table = document.createElement("table");
                 table.className = "small nrl-group";
 
-                // Section header: e.g. "NRL — Round 15" or "SOO — Game 2"
                 const headerRow = document.createElement("tr");
                 const headerCell = document.createElement("td");
                 headerCell.colSpan = 3;
@@ -155,18 +174,16 @@ Module.register("MMM-NRL", {
                 table.appendChild(headerRow);
 
                 compMatches.forEach(match => {
-                    table.appendChild(this.createMatchRow(match, true));
+                    this.createMatchRows(match, true).forEach(row => table.appendChild(row));
                 });
 
                 wrapper.appendChild(table);
             });
         } else {
-            // Single competition — original layout with venue rows
             const table = document.createElement("table");
             table.className = "small";
             this.matches.forEach(match => {
-                const node = this.createMatchRow(match, false);
-                table.appendChild(node);
+                this.createMatchRows(match, false).forEach(row => table.appendChild(row));
             });
             wrapper.appendChild(table);
         }
@@ -174,46 +191,62 @@ Module.register("MMM-NRL", {
         return wrapper;
     },
 
-    createMatchRow: function(match, grouped) {
+    createMatchRows: function(match, grouped) {
+        const rows = [];
         const row = document.createElement("tr");
         row.className = "title bright";
 
         // Home team
         const homeCell = document.createElement("td");
         homeCell.className = "align-right";
+        const homeName = this.config.useAbbreviations
+            ? (this.teamAbbreviations[match.home.name] || match.home.name)
+            : match.home.name;
+        const homeNameSpan = document.createElement("span");
+        homeNameSpan.textContent = homeName;
+        homeCell.appendChild(homeNameSpan);
         if (this.config.showLogos && match.home.logo) {
             const logo = this.createLogo(match.home, !this.config.colored);
             if (logo) homeCell.appendChild(logo);
         }
-        const homeName = this.config.useAbbreviations
-            ? (this.teamAbbreviations[match.home.name] || match.home.name)
-            : match.home.name;
-        homeCell.innerHTML += ` ${homeName}`;
         row.appendChild(homeCell);
 
         // Score / time
         const scoreCell = document.createElement("td");
         scoreCell.className = "align-center score-cell";
         if (this.config.showScores && (match.status === "LIVE" || match.status === "FINISHED")) {
-            scoreCell.innerHTML = `${match.home.score} - ${match.away.score}`;
+            scoreCell.textContent = `${match.home.score} - ${match.away.score}`;
         } else {
             const matchTime = new Date(match.starttime);
             if (grouped) {
-                // Compact: "Wed 19:50"
-                const day = matchTime.toLocaleDateString([], { weekday: "short" });
-                const time = matchTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-                scoreCell.innerHTML = `<span class="match-day">${day}</span> <span class="match-time">${time}</span>`;
+                const daySpan = document.createElement("span");
+                daySpan.className = "match-day";
+                daySpan.textContent = matchTime.toLocaleDateString([], { weekday: "short" });
+                const timeSpan = document.createElement("span");
+                timeSpan.className = "match-time";
+                timeSpan.textContent = matchTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+                scoreCell.appendChild(daySpan);
+                scoreCell.appendChild(document.createTextNode(" "));
+                scoreCell.appendChild(timeSpan);
             } else {
                 const dateStr = matchTime.toLocaleDateString([], { day: "numeric", month: "short", year: "numeric" });
-                scoreCell.innerHTML = `<div class="match-date">${dateStr}</div>`;
-                scoreCell.innerHTML += `<div class="match-time">${matchTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>`;
+                const dateDiv = document.createElement("div");
+                dateDiv.className = "match-date";
+                dateDiv.textContent = dateStr;
+                const timeDiv = document.createElement("div");
+                timeDiv.className = "match-time";
+                timeDiv.textContent = matchTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+                scoreCell.appendChild(dateDiv);
+                scoreCell.appendChild(timeDiv);
             }
         }
-        // Grouped: venue shown inline under the time — no extra row needed
         if (grouped && this.config.showVenue && match.venue) {
-            scoreCell.innerHTML += `<div class="venue-inline">${match.venue}</div>`;
+            const venueDiv = document.createElement("div");
+            venueDiv.className = "venue-inline";
+            venueDiv.textContent = match.venue;
+            scoreCell.appendChild(venueDiv);
         }
-        if (match.status === "LIVE") scoreCell.className += " live";
+        if (match.status === "LIVE") scoreCell.classList.add("live");
         row.appendChild(scoreCell);
 
         // Away team
@@ -222,14 +255,18 @@ Module.register("MMM-NRL", {
         const awayName = this.config.useAbbreviations
             ? (this.teamAbbreviations[match.away.name] || match.away.name)
             : match.away.name;
-        awayCell.innerHTML = awayName;
         if (this.config.showLogos && match.away.logo) {
             const logo = this.createLogo(match.away, !this.config.colored);
             if (logo) awayCell.appendChild(logo);
         }
+        const awayNameSpan = document.createElement("span");
+        awayNameSpan.textContent = awayName;
+        awayCell.appendChild(awayNameSpan);
         row.appendChild(awayCell);
 
-        // Venue row — single mode only (grouped shows venue inline in score cell above)
+        rows.push(row);
+
+        // Venue row — single-competition mode only (grouped shows venue inline above)
         if (!grouped && this.config.showVenue && match.venue) {
             const venueRow = document.createElement("tr");
             venueRow.className = "dimmed small";
@@ -241,15 +278,12 @@ Module.register("MMM-NRL", {
                 const label = this.competitionLabels[match.competition] || match.competition.toUpperCase();
                 venueText = `${label} | ${venueText}`;
             }
-            venueCell.innerHTML = venueText;
+            venueCell.textContent = venueText;
             venueRow.appendChild(venueCell);
-            const fragment = document.createDocumentFragment();
-            fragment.appendChild(row);
-            fragment.appendChild(venueRow);
-            return fragment;
+            rows.push(venueRow);
         }
 
-        return row;
+        return rows;
     },
 
     createLogo: function(team, isGrayscale) {

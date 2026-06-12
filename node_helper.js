@@ -10,29 +10,33 @@ const COMPETITION_IDS = {
 };
 
 const TEAM_KEY_MAP = {
-    "sea-eagles":   "seaeagles",
-    "rabbitohs":    "rabbitohs",
-    "broncos":      "broncos",
-    "bulldogs":     "bulldogs",
-    "cowboys":      "cowboys",
-    "dragons":      "dragons",
-    "eels":         "eels",
-    "knights":      "knights",
-    "panthers":     "panthers",
-    "raiders":      "raiders",
-    "roosters":     "roosters",
-    "sharks":       "sharks",
-    "storm":        "storm",
-    "wests-tigers": "tigers",
-    "titans":       "titans",
-    "warriors":     "warriors",
-    "dolphins":     "dolphins",
+    "sea-eagles":      "seaeagles",
+    "rabbitohs":       "rabbitohs",
+    "broncos":         "broncos",
+    "bulldogs":        "bulldogs",
+    "cowboys":         "cowboys",
+    "dragons":         "dragons",
+    "eels":            "eels",
+    "knights":         "knights",
+    "panthers":        "panthers",
+    "raiders":         "raiders",
+    "roosters":        "roosters",
+    "sharks":          "sharks",
+    "storm":           "storm",
+    "wests-tigers":    "tigers",
+    "titans":          "titans",
+    "warriors":        "warriors",
+    "dolphins":        "dolphins",
     // State of Origin
-    "blues":        "blues",
-    "maroons":      "maroons",
-    // Expansion teams — keys added ahead of 2027/2028 NRL entry
-    "perth-bears":  "perth-bears",
-    "png-chiefs":   "png-chiefs"
+    "blues":           "blues",
+    "nsw-blues":       "blues",
+    "new-south-wales": "blues",
+    "nsw":             "blues",
+    "maroons":         "maroons",
+    "queensland":      "maroons",
+    // Expansion teams — ready for 2027/2028 NRL entry
+    "perth-bears":     "perth-bears",
+    "png-chiefs":      "png-chiefs"
 };
 
 module.exports = NodeHelper.create({
@@ -53,17 +57,16 @@ module.exports = NodeHelper.create({
             const allMatches = [];
 
             for (const comp of competitions) {
-                const compId = typeof comp === "number"
-                    ? comp
-                    : (COMPETITION_IDS[comp.toLowerCase()] || null);
+                const compKey = String(comp).toLowerCase();
+                const compId = COMPETITION_IDS[compKey];
 
                 if (!compId) {
-                    console.warn(this.name + ": Unknown competition identifier: " + comp);
+                    console.warn(this.name + ": Unknown competition: " + comp);
                     continue;
                 }
 
                 try {
-                    console.log(this.name + `: Fetching ${comp} data (id=${compId})...`);
+                    console.log(this.name + `: Fetching ${compKey.toUpperCase()} (id=${compId})...`);
                     const response = await fetch(`https://www.nrl.com/draw/data?competition=${compId}`, {
                         headers: {
                             "User-Agent": "Mozilla/5.0",
@@ -71,13 +74,11 @@ module.exports = NodeHelper.create({
                         }
                     });
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
                     const data = await response.json();
                     (data.fixtures || []).forEach(fixture => {
-                        allMatches.push(this.formatMatch(fixture, String(comp)));
+                        allMatches.push(this.formatMatch(fixture, compKey));
                     });
 
                 } catch (compError) {
@@ -103,7 +104,7 @@ module.exports = NodeHelper.create({
             setTimeout(() => this.getData(), nextInterval);
 
         } catch (error) {
-            console.error(this.name + ": Error fetching data -", error);
+            console.error(this.name + ": Error -", error);
             this.sendSocketNotification("ERROR", error.message);
             setTimeout(() => this.getData(), this.config.updateInterval);
         }

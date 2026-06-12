@@ -13,10 +13,13 @@
 }
 
 .MMM-NRL table {
+    width: 100%;
+    table-layout: fixed;
     border-spacing: 0;
     border-collapse: separate;
     color: #fff;
     margin: 0 auto;
+    max-width: 800px;
 }
 
 .MMM-NRL tr {
@@ -37,27 +40,43 @@
     vertical-align: top;
 }
 
-/* Team name columns */
-.MMM-NRL .align-left {
-    text-align: left;
-    padding-left: 8px;
-    min-width: 60px;
+/* Home/away team columns — equal fixed width so any competition aligns */
+.MMM-NRL .align-right {
+    text-align: right;
+    padding-right: 10px;
+    width: 42%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-/* Score/time column */
+.MMM-NRL .align-right .team-logo {
+    margin-left: 6px;
+    margin-right: 0;
+}
+
+/* Score/time column — fixed centre */
 .MMM-NRL .align-center {
     text-align: center;
-    padding: 0 8px;
-    min-width: 80px;
+    width: 16%;
+    padding: 0 4px;
     font-weight: 500;
     line-height: 1.2;
 }
 
-/* Team name columns */
-.MMM-NRL .align-right {
-    text-align: right;
-    padding-right: 8px;
-    min-width: 60px;
+/* Away team column */
+.MMM-NRL .align-left {
+    text-align: left;
+    padding-left: 10px;
+    width: 42%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.MMM-NRL .align-left .team-logo {
+    margin-right: 6px;
+    margin-left: 0;
 }
 
 .MMM-NRL .score-cell {
@@ -78,7 +97,7 @@
 }
 
 .MMM-NRL .venue-cell {
-    padding: 2px 8px 6px 8px;
+    padding: 2px 8px 6px;
     font-size: 85%;
     text-align: center;
     color: rgba(255, 255, 255, 0.6);
@@ -132,15 +151,10 @@
         padding: 4px 0;
     }
 
-    .MMM-NRL .align-left,
-    .MMM-NRL .align-right {
-        min-width: 50px;
-    }
-
     .MMM-NRL .team-logo {
-        height: 25px;
-        width: 25px;
-        margin: 0 4px;
+        height: 22px;
+        width: 22px;
+        margin: 0 3px;
     }
 
     .MMM-NRL .venue-cell {
