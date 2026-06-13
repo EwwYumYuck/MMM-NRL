@@ -209,7 +209,7 @@ No breaking changes.
 
 ## Screenshot
 
-![MMM-NRL Module Screenshot](screenshot/mmm-nrl.png)
+![MMM-NRL Module Screenshot](screenshot/screenshot.png)
 
 ## Contributing
 
