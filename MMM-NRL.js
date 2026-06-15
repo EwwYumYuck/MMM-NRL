@@ -240,12 +240,6 @@ Module.register("MMM-NRL", {
                 scoreCell.appendChild(timeDiv);
             }
         }
-        if (grouped && this.config.showVenue && match.venue) {
-            const venueDiv = document.createElement("div");
-            venueDiv.className = "venue-inline";
-            venueDiv.textContent = match.venue;
-            scoreCell.appendChild(venueDiv);
-        }
         if (match.status === "LIVE") scoreCell.classList.add("live");
         row.appendChild(scoreCell);
 

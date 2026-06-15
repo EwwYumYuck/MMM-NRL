@@ -172,7 +172,11 @@
     border-spacing: 0;
     border-collapse: separate;
     color: #fff;
-    margin: 0 auto 10px auto;
+    margin: 0 auto 6px auto;
+}
+
+.MMM-NRL .nrl-group td {
+    padding: 3px 0;
 }
 
 .MMM-NRL .competition-header {
