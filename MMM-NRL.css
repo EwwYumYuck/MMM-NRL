@@ -197,9 +197,10 @@
 
 /* Venue shown inline under time in grouped mode */
 .MMM-NRL .venue-inline {
-    font-size: 72%;
-    opacity: 0.5;
+    font-size: 65%;
+    opacity: 0.45;
     font-weight: normal;
+    line-height: 1;
     margin-top: 1px;
     overflow: hidden;
     text-overflow: ellipsis;
